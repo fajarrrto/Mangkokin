@@ -85,7 +85,7 @@
 
     <main class="max-w-6xl mx-auto px-4 py-6 space-y-6">
 
-        <!-- Banner Info Admin Mode Aktif -->
+        <!-- Banner Info Admin Mode Aktif (Hanya Teks Notifikasi) -->
         <div id="adminNotice" class="hidden bg-amber-50 border-l-4 border-amber-500 p-3.5 rounded-r-lg shadow-sm flex items-center no-print">
             <div class="flex items-center text-amber-900 text-xs sm:text-sm font-medium">
                 <i class="fa-solid fa-shield-halved text-lg mr-3 text-amber-600"></i>
@@ -664,7 +664,7 @@
     <!-- MODAL INPUT MODAL AWAL PER TANGGAL -->
     <div id="modalAwalDialog" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm hidden items-center justify-center p-4">
         <div class="bg-white rounded-2xl max-w-sm w-full p-5 shadow-2xl animate-pop border border-slate-200">
-            <h3 class="text-base font-bold text-slate-800 mb-1 flex items-center gap-2">
+            <h3 id="modalAwalTitle" class="text-base font-bold text-slate-800 mb-1 flex items-center gap-2">
                 <i class="fa-solid fa-vault text-indigo-600"></i> Atur Modal Kas Awal
             </h3>
             <p class="text-xs text-slate-500 mb-3">Tentukan tanggal dan modal kas awal untuk hari tersebut:</p>
@@ -890,22 +890,20 @@
             handlePeriodTypeChange();
         }
 
-        // ==================== SINKRONISASI DUA ARAH DENGAN GOOGLE SHEETS ====================
-        async function sinkronDariGoogleSheets(isManualClick = false) {
+        // ==================== SINKRONISASI BEBAS BLOKIR CORS DENGAN GOOGLE SHEETS ====================
+        function sinkronDariGoogleSheets(isManualClick = false) {
             if (!GOOGLE_SHEET_URL) return;
 
             const spinIcon = document.getElementById("syncSpinIcon");
             if (spinIcon) spinIcon.classList.add("fa-spin");
 
-            try {
-                const response = await fetch(GOOGLE_SHEET_URL, { method: "GET" });
-                const resJson = await response.json();
+            window.handleSheetsResponse = function(response) {
+                if (spinIcon) spinIcon.classList.remove("fa-spin");
+                
+                if (response && response.status === "success") {
+                    transaksiList = response.penjualan || [];
+                    pengeluaranList = response.pengeluaran || [];
 
-                if (resJson && resJson.status === "success") {
-                    transaksiList = resJson.penjualan || [];
-                    pengeluaranList = resJson.pengeluaran || [];
-
-                    // Simpan ke local cache agar tetap bisa dibuka offline
                     localStorage.setItem("dagangan_transaksi", JSON.stringify(transaksiList));
                     localStorage.setItem("dagangan_pengeluaran", JSON.stringify(pengeluaranList));
 
@@ -913,15 +911,29 @@
                     if (isManualClick) {
                         showCenterToast("Data berhasil disinkronkan dari Sheets!");
                     }
+                } else {
+                    console.warn("Gagal membaca respon:", response);
+                    if (isManualClick) {
+                        showCenterToast("Gagal memproses data Google Sheets", "error");
+                    }
                 }
-            } catch (err) {
-                console.warn("Gagal sinkron data cloud, membaca memori lokal:", err);
+            };
+
+            const oldScript = document.getElementById("jsonpSyncScript");
+            if (oldScript) oldScript.remove();
+
+            const script = document.createElement("script");
+            script.id = "jsonpSyncScript";
+            const separator = GOOGLE_SHEET_URL.includes("?") ? "&" : "?";
+            script.src = `${GOOGLE_SHEET_URL}${separator}callback=handleSheetsResponse&_t=${Date.now()}`;
+            script.onerror = function() {
+                if (spinIcon) spinIcon.classList.remove("fa-spin");
+                console.warn("Koneksi gagal, memakai data memori lokal.");
                 if (isManualClick) {
                     showCenterToast("Gagal menyambung ke Sheets, gunakan offline data", "error");
                 }
-            } finally {
-                if (spinIcon) spinIcon.classList.remove("fa-spin");
-            }
+            };
+            document.body.appendChild(script);
         }
 
         // ==================== FILTER REKAP ====================
@@ -1891,7 +1903,7 @@
             showCenterToast("File CSV berhasil diunduh!");
         }
 
-        // ==================== LOGIKA ADMIN & AUTENTIKASI ====================
+        // ==================== LOGIKA ADMIN, ENTER KEY & AUTO-CLOSE ====================
         function handleAuthAction() {
             if (isAdminLoggedIn) {
                 logoutAdmin();
@@ -2017,7 +2029,6 @@
             initMenuOptions();
             initDefaultDates();
             renderSemuaTabel();
-            // Otomatis tarik data terbaru dari Google Sheets saat pertama kali halaman dimuat
             sinkronDariGoogleSheets(false);
         };
     </script>
