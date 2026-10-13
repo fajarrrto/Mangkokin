@@ -58,7 +58,7 @@
 
     <!-- Header dengan Logo Mangkokin & Navigasi Role -->
     <header class="bg-indigo-700 text-white shadow-md no-print">
-        <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-3">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-3">
             <div class="flex items-center space-x-3">
                 <img src="logo_mangkokin.png" alt="Logo Mangkokin" onerror="this.src='WhatsApp Image 2026-10-12 at 09.54.25.jpeg'; this.onerror=null;" class="w-12 h-12 rounded-full object-cover border-2 border-amber-300 shadow bg-amber-100">
                 <div>
@@ -83,9 +83,9 @@
         </div>
     </header>
 
-    <main class="max-w-6xl mx-auto px-4 py-6 space-y-6">
+    <main class="max-w-7xl mx-auto px-4 py-6 space-y-6">
 
-        <!-- Banner Info Admin Mode Aktif (Hanya Teks Notifikasi) -->
+        <!-- Banner Info Admin Mode Aktif -->
         <div id="adminNotice" class="hidden bg-amber-50 border-l-4 border-amber-500 p-3.5 rounded-r-lg shadow-sm flex items-center no-print">
             <div class="flex items-center text-amber-900 text-xs sm:text-sm font-medium">
                 <i class="fa-solid fa-shield-halved text-lg mr-3 text-amber-600"></i>
@@ -93,66 +93,94 @@
             </div>
         </div>
 
-        <!-- 6 KARTU RINGKASAN KEUANGAN -->
-        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3">
-            <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
+        <!-- 8 KARTU RINGKASAN KEUANGAN & TOTAL SALDO -->
+        <section class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3">
+            <!-- 1. Modal Kas Awal -->
+            <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
                 <div class="flex items-center justify-between">
-                    <span class="text-xs font-semibold text-slate-500">Modal Kas Awal</span>
+                    <span class="text-[11px] font-semibold text-slate-500">Modal Kas Awal</span>
                     <button id="btnEditModal" onclick="checkAdminThenExecute(editModalAwalDialog)" title="Atur Modal Awal per Tanggal" class="text-indigo-600 hover:text-indigo-800 text-xs no-print">
                         <i class="fa-solid fa-pen-to-square"></i>
                     </button>
                 </div>
-                <h3 id="statModalAwal" class="text-lg font-bold text-slate-800 mt-2">Rp 0</h3>
+                <h3 id="statModalAwal" class="text-base font-bold text-slate-800 mt-2">Rp 0</h3>
                 <span id="labelTanggalModal" class="text-[10px] text-slate-400 mt-1 truncate">Hari Ini</span>
             </div>
 
-            <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
+            <!-- 2. Total Penjualan -->
+            <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
                 <div class="flex items-center justify-between">
-                    <span class="text-xs font-semibold text-slate-500">Total Penjualan</span>
-                    <i class="fa-solid fa-arrow-trend-up text-emerald-500 text-sm"></i>
+                    <span class="text-[11px] font-semibold text-slate-500">Total Penjualan</span>
+                    <i class="fa-solid fa-arrow-trend-up text-emerald-500 text-xs"></i>
                 </div>
-                <h3 id="statTotalPendapatan" class="text-lg font-bold text-emerald-600 mt-2">Rp 0</h3>
+                <h3 id="statTotalPendapatan" class="text-base font-bold text-emerald-600 mt-2">Rp 0</h3>
                 <span class="text-[10px] text-slate-400 mt-1">Pemasukan periode ini</span>
             </div>
 
-            <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
+            <!-- 3. Total Belanja -->
+            <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
                 <div class="flex items-center justify-between">
-                    <span class="text-xs font-semibold text-slate-500">Total Belanja</span>
-                    <i class="fa-solid fa-arrow-trend-down text-rose-500 text-sm"></i>
+                    <span class="text-[11px] font-semibold text-slate-500">Total Belanja</span>
+                    <i class="fa-solid fa-arrow-trend-down text-rose-500 text-xs"></i>
                 </div>
-                <h3 id="statTotalPengeluaran" class="text-lg font-bold text-rose-600 mt-2">Rp 0</h3>
+                <h3 id="statTotalPengeluaran" class="text-base font-bold text-rose-600 mt-2">Rp 0</h3>
                 <span class="text-[10px] text-slate-400 mt-1">Pengeluaran modal</span>
             </div>
 
-            <div class="bg-indigo-50/50 p-3.5 rounded-xl border-2 border-indigo-200 shadow-sm flex flex-col justify-between">
+            <!-- 4. Sisa Kas Fisik Harian -->
+            <div class="bg-indigo-50/50 p-3 rounded-xl border border-indigo-200 shadow-sm flex flex-col justify-between">
                 <div class="flex items-center justify-between">
-                    <span class="text-xs font-bold text-indigo-900">Sisa Kas Fisik</span>
-                    <i class="fa-solid fa-cash-register text-indigo-600 text-sm"></i>
+                    <span class="text-[11px] font-bold text-indigo-900">Sisa Kas Fisik</span>
+                    <i class="fa-solid fa-cash-register text-indigo-600 text-xs"></i>
                 </div>
-                <h3 id="statSaldoKas" class="text-lg font-extrabold text-indigo-700 mt-2">Rp 0</h3>
-                <span class="text-[10px] text-indigo-500 mt-1">Uang laci/tunai</span>
+                <h3 id="statSaldoKas" class="text-base font-extrabold text-indigo-700 mt-2">Rp 0</h3>
+                <span class="text-[10px] text-indigo-500 mt-1">Uang laci/tunai harian</span>
             </div>
 
-            <div class="bg-white p-3.5 rounded-xl border border-blue-200 shadow-sm flex flex-col justify-between">
+            <!-- 5. Uang Cash (Fisik Bersih Keseluruhan) -->
+            <div class="bg-white p-3 rounded-xl border border-emerald-200 shadow-sm flex flex-col justify-between">
                 <div class="flex items-center justify-between">
-                    <span class="text-xs font-bold text-blue-800">Bank BCA</span>
+                    <span class="text-[11px] font-bold text-emerald-800">Uang Cash</span>
+                    <button onclick="checkAdminThenExecute(() => editSaldoBankDialog('Cash'))" title="Update Uang Cash" class="text-emerald-600 hover:text-emerald-800 text-xs no-print">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                    </button>
+                </div>
+                <h3 id="statUangCash" class="text-base font-bold text-emerald-600 mt-2">Rp 0</h3>
+                <span class="text-[10px] text-slate-400 mt-1">Kas tunai fisik</span>
+            </div>
+
+            <!-- 6. Bank BCA -->
+            <div class="bg-white p-3 rounded-xl border border-blue-200 shadow-sm flex flex-col justify-between">
+                <div class="flex items-center justify-between">
+                    <span class="text-[11px] font-bold text-blue-800">Bank BCA</span>
                     <button onclick="checkAdminThenExecute(() => editSaldoBankDialog('BCA'))" title="Update Saldo BCA" class="text-blue-600 hover:text-blue-800 text-xs no-print">
                         <i class="fa-solid fa-pen-to-square"></i>
                     </button>
                 </div>
-                <h3 id="statSaldoBCA" class="text-lg font-bold text-blue-600 mt-2">Rp 0</h3>
+                <h3 id="statSaldoBCA" class="text-base font-bold text-blue-600 mt-2">Rp 0</h3>
                 <span class="text-[10px] text-slate-400 mt-1">Rekening BCA</span>
             </div>
 
-            <div class="bg-white p-3.5 rounded-xl border border-amber-200 shadow-sm flex flex-col justify-between">
+            <!-- 7. ShopeePay -->
+            <div class="bg-white p-3 rounded-xl border border-amber-200 shadow-sm flex flex-col justify-between">
                 <div class="flex items-center justify-between">
-                    <span class="text-xs font-bold text-amber-800">ShopeePay</span>
+                    <span class="text-[11px] font-bold text-amber-800">ShopeePay</span>
                     <button onclick="checkAdminThenExecute(() => editSaldoBankDialog('ShopeePay'))" title="Update Saldo ShopeePay" class="text-amber-600 hover:text-amber-800 text-xs no-print">
                         <i class="fa-solid fa-pen-to-square"></i>
                     </button>
                 </div>
-                <h3 id="statSaldoShopeepay" class="text-lg font-bold text-amber-600 mt-2">Rp 0</h3>
+                <h3 id="statSaldoShopeepay" class="text-base font-bold text-amber-600 mt-2">Rp 0</h3>
                 <span class="text-[10px] text-slate-400 mt-1">E-Wallet Shopee</span>
+            </div>
+
+            <!-- 8. Total Saldo (Cash + BCA + Spay) -->
+            <div class="bg-gradient-to-br from-indigo-600 to-indigo-800 text-white p-3 rounded-xl shadow-md flex flex-col justify-between border border-indigo-900">
+                <div class="flex items-center justify-between">
+                    <span class="text-[11px] font-bold text-indigo-100">Total Saldo</span>
+                    <i class="fa-solid fa-wallet text-amber-300 text-xs"></i>
+                </div>
+                <h3 id="statTotalSemuaSaldo" class="text-base font-extrabold text-white mt-2">Rp 0</h3>
+                <span class="text-[10px] text-indigo-200 mt-1">Cash + BCA + Spay</span>
             </div>
         </section>
 
@@ -414,7 +442,7 @@
                             <th class="py-3 px-4 text-center w-12">No</th>
                             <th class="py-3 px-4">Tanggal</th>
                             <th class="py-3 px-4">Nama Keperluan / Belanja</th>
-                            <th class="py-3 px-4">Kategori</th>
+                            <th class="py-3 px-4 text-center">Kategori</th>
                             <th class="py-3 px-4 text-right">Biaya Pengeluaran</th>
                             <th class="py-3 px-4 text-center w-24 no-print">Aksi</th>
                         </tr>
@@ -606,7 +634,7 @@
         </div>
     </div>
 
-    <!-- PREVIEW INVOICE STRUK LENGKAP DENGAN LOGO & ALAMAT -->
+    <!-- PREVIEW INVOICE STRUK -->
     <div id="invoicePreviewModal" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm hidden items-center justify-center p-4">
         <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl animate-pop border border-slate-200">
             <div id="printableInvoiceArea" class="bg-white text-slate-800 p-2 font-mono text-xs">
@@ -687,13 +715,13 @@
         </div>
     </div>
 
-    <!-- MODAL UPDATE SALDO BANK / SHOPEEPAY -->
+    <!-- MODAL UPDATE SALDO BANK / SHOPEEPAY / CASH -->
     <div id="bankDialog" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm hidden items-center justify-center p-4">
         <div class="bg-white rounded-2xl max-w-sm w-full p-5 shadow-2xl animate-pop border border-slate-200">
             <h3 id="bankDialogTitle" class="text-base font-bold text-slate-800 mb-1 flex items-center gap-2">
-                <i class="fa-solid fa-building-columns text-blue-600"></i> Update Saldo Rekening
+                <i class="fa-solid fa-building-columns text-blue-600"></i> Update Saldo
             </h3>
-            <p class="text-xs text-slate-500 mb-3">Perbarui saldo rekening atau e-wallet saat ini:</p>
+            <p class="text-xs text-slate-500 mb-3">Perbarui saldo rekening, e-wallet, atau uang tunai:</p>
             
             <input type="hidden" id="bankTargetType">
             <div class="mb-4">
@@ -776,6 +804,9 @@
 
         let currentPricing = JSON.parse(localStorage.getItem("dagangan_pricing")) || DEFAULT_PRICING;
         let modalAwalMap = JSON.parse(localStorage.getItem("dagangan_modal_harian_map")) || {};
+        
+        // Saldo Keuangan: Cash, BCA, dan ShopeePay
+        let saldoCash = parseInt(localStorage.getItem("dagangan_saldo_cash")) || 0;
         let saldoBCA = parseInt(localStorage.getItem("dagangan_saldo_bca")) || 0;
         let saldoShopeepay = parseInt(localStorage.getItem("dagangan_saldo_shopeepay")) || 0;
 
@@ -1683,16 +1714,24 @@
             document.getElementById("tableTotalNominal").textContent = formatRp(totalPenjualan);
             document.getElementById("tableTotalExpense").textContent = formatRp(totalPengeluaran);
 
+            // Perhitungan Kas Fisik Harian
             const saldoKasFisik = modalAwalHariIni + totalPenjualan - totalPengeluaran;
+            
+            // Total Saldo Keseluruhan (Cash + BCA + ShopeePay)
+            const totalSemuaSaldo = saldoCash + saldoBCA + saldoShopeepay;
 
+            // Update Kartu Statistik
             document.getElementById("statModalAwal").textContent = formatRp(modalAwalHariIni);
             document.getElementById("labelTanggalModal").textContent = formatTanggalLengkapIndo(activeDate);
             document.getElementById("statTotalPendapatan").textContent = formatRp(totalPenjualan);
             document.getElementById("statTotalPengeluaran").textContent = formatRp(totalPengeluaran);
             document.getElementById("statSaldoKas").textContent = formatRp(saldoKasFisik);
 
+            // Saldo Dompet & Bank
+            document.getElementById("statUangCash").textContent = formatRp(saldoCash);
             document.getElementById("statSaldoBCA").textContent = formatRp(saldoBCA);
             document.getElementById("statSaldoShopeepay").textContent = formatRp(saldoShopeepay);
+            document.getElementById("statTotalSemuaSaldo").textContent = formatRp(totalSemuaSaldo);
 
             const btnReset = document.getElementById("btnResetDataHarian");
             if (isAdminLoggedIn) {
@@ -1773,6 +1812,7 @@
             showCenterToast(`Modal awal ${formatTanggalLengkapIndo(dateVal)} disimpan!`);
         }
 
+        // ==================== DIALOG UPDATE SALDO CASH / BCA / SHOPEEPAY ====================
         function editSaldoBankDialog(type) {
             const dialog = document.getElementById("bankDialog");
             const titleEl = document.getElementById("bankDialogTitle");
@@ -1781,7 +1821,11 @@
             const nominalInput = document.getElementById("bankInputNominal");
 
             typeInput.value = type;
-            if (type === 'BCA') {
+            if (type === 'Cash') {
+                titleEl.innerHTML = '<i class="fa-solid fa-money-bill-wave text-emerald-600"></i> Saldo Uang Cash';
+                labelEl.textContent = 'Nominal Uang Cash Fisik Saat Ini';
+                nominalInput.value = saldoCash > 0 ? formatRp(saldoCash) : '';
+            } else if (type === 'BCA') {
                 titleEl.innerHTML = '<i class="fa-solid fa-building-columns text-blue-600"></i> Saldo Rekening Bank BCA';
                 labelEl.textContent = 'Nominal Saldo BCA Terkini';
                 nominalInput.value = saldoBCA > 0 ? formatRp(saldoBCA) : '';
@@ -1805,7 +1849,11 @@
             const type = document.getElementById("bankTargetType").value;
             const nominal = parseRupiahInput(document.getElementById("bankInputNominal"));
 
-            if (type === 'BCA') {
+            if (type === 'Cash') {
+                saldoCash = nominal;
+                localStorage.setItem("dagangan_saldo_cash", saldoCash);
+                showCenterToast("Saldo Uang Cash berhasil diperbarui!");
+            } else if (type === 'BCA') {
                 saldoBCA = nominal;
                 localStorage.setItem("dagangan_saldo_bca", saldoBCA);
                 showCenterToast("Saldo Bank BCA berhasil diperbarui!");
@@ -1864,7 +1912,7 @@
             });
 
             const sisaKasFisik = modalAwalHariIni + totalPenjualan - totalBelanja;
-            const totalAsetKeuangan = sisaKasFisik + saldoBCA + saldoShopeepay;
+            const totalSemuaSaldo = saldoCash + saldoBCA + saldoShopeepay;
 
             let csv = "data:text/csv;charset=utf-8,";
             
@@ -1873,10 +1921,11 @@
             csv += `Modal Kas Awal,${modalAwalHariIni}\n`;
             csv += `Total Penjualan (${totalQtyPenjualan} Porsi),${totalPenjualan}\n`;
             csv += `Total Belanja Pengeluaran,${totalBelanja}\n`;
-            csv += `Sisa Saldo Kas Fisik (Tunai),${sisaKasFisik}\n`;
+            csv += `Sisa Saldo Kas Fisik (Tunai Harian),${sisaKasFisik}\n`;
+            csv += `Uang Cash,${saldoCash}\n`;
             csv += `Saldo Rekening Bank BCA,${saldoBCA}\n`;
             csv += `Saldo ShopeePay,${saldoShopeepay}\n`;
-            csv += `Total Keseluruhan Keuangan Dimiliki,${totalAsetKeuangan}\n\n`;
+            csv += `Total Saldo (Cash + BCA + Spay),${totalSemuaSaldo}\n\n`;
 
             csv += "=== RINCIAN REKAPITULASI PENJUALAN ===\n";
             csv += "No,Tanggal Penjualan,Menu Dagangan,Harga Satuan,Qty,Subtotal\n";
@@ -1903,7 +1952,7 @@
             showCenterToast("File CSV berhasil diunduh!");
         }
 
-        // ==================== LOGIKA ADMIN, ENTER KEY & AUTO-CLOSE ====================
+        // ==================== LOGIKA ADMIN & AUTENTIKASI ====================
         function handleAuthAction() {
             if (isAdminLoggedIn) {
                 logoutAdmin();
@@ -2003,34 +2052,4 @@
         }
 
         function updateRoleUI(isAdmin) {
-            const badge = document.getElementById("roleBadge");
-            const notice = document.getElementById("adminNotice");
-            const authBtn = document.getElementById("authBtn");
-            const btnUbahHarga = document.getElementById("btnHeaderUbahHarga");
-
-            if (isAdmin) {
-                badge.className = "bg-amber-500 text-white text-xs px-3.5 py-1.5 rounded-full font-semibold uppercase tracking-wider flex items-center gap-1.5 shadow-sm";
-                badge.innerHTML = '<i class="fa-solid fa-shield-halved"></i> Admin';
-                notice.classList.remove("hidden");
-                btnUbahHarga.classList.remove("hidden");
-                authBtn.className = "bg-rose-700 hover:bg-rose-800 text-xs px-3.5 py-1.5 rounded-lg transition font-medium border border-rose-500 flex items-center gap-1.5 shadow-sm text-white";
-                authBtn.innerHTML = '<i class="fa-solid fa-right-from-bracket"></i> <span>Logout</span>';
-            } else {
-                badge.className = "bg-emerald-500 text-white text-xs px-3.5 py-1.5 rounded-full font-semibold uppercase tracking-wider flex items-center gap-1.5 shadow-sm";
-                badge.innerHTML = '<i class="fa-solid fa-user"></i> User';
-                notice.classList.add("hidden");
-                btnUbahHarga.classList.add("hidden");
-                authBtn.className = "bg-indigo-900 hover:bg-indigo-950 text-xs px-3.5 py-1.5 rounded-lg transition font-medium border border-indigo-500 flex items-center gap-1.5 shadow-sm text-white";
-                authBtn.innerHTML = '<i class="fa-solid fa-lock"></i> <span>Login</span>';
-            }
-        }
-
-        window.onload = function() {
-            initMenuOptions();
-            initDefaultDates();
-            renderSemuaTabel();
-            sinkronDariGoogleSheets(false);
-        };
-    </script>
-</body>
-</html>
+            const badge = document.getElementById("roleBadge
