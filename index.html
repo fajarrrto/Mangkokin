@@ -93,94 +93,82 @@
             </div>
         </div>
 
-        <!-- 8 KARTU RINGKASAN KEUANGAN & TOTAL SALDO -->
-        <section class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3">
+        <!-- 7 KARTU RINGKASAN KEUANGAN (UANG CASH DIHAPUS, SISA KAS FISIK MURNI, TOTAL SALDO GABUNGAN) -->
+        <section class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
             <!-- 1. Modal Kas Awal -->
-            <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
+            <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
                 <div class="flex items-center justify-between">
-                    <span class="text-[11px] font-semibold text-slate-500">Modal Kas Awal</span>
+                    <span class="text-xs font-semibold text-slate-500">Modal Kas Awal</span>
                     <button id="btnEditModal" onclick="checkAdminThenExecute(editModalAwalDialog)" title="Atur Modal Awal per Tanggal" class="text-indigo-600 hover:text-indigo-800 text-xs no-print">
                         <i class="fa-solid fa-pen-to-square"></i>
                     </button>
                 </div>
-                <h3 id="statModalAwal" class="text-base font-bold text-slate-800 mt-2">Rp 0</h3>
+                <h3 id="statModalAwal" class="text-lg font-bold text-slate-800 mt-2">Rp 0</h3>
                 <span id="labelTanggalModal" class="text-[10px] text-slate-400 mt-1 truncate">Hari Ini</span>
             </div>
 
             <!-- 2. Total Penjualan -->
-            <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
+            <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
                 <div class="flex items-center justify-between">
-                    <span class="text-[11px] font-semibold text-slate-500">Total Penjualan</span>
-                    <i class="fa-solid fa-arrow-trend-up text-emerald-500 text-xs"></i>
+                    <span class="text-xs font-semibold text-slate-500">Total Penjualan</span>
+                    <i class="fa-solid fa-arrow-trend-up text-emerald-500 text-sm"></i>
                 </div>
-                <h3 id="statTotalPendapatan" class="text-base font-bold text-emerald-600 mt-2">Rp 0</h3>
-                <span class="text-[10px] text-slate-400 mt-1">Pemasukan periode ini</span>
+                <h3 id="statTotalPendapatan" class="text-lg font-bold text-emerald-600 mt-2">Rp 0</h3>
+                <span class="text-[10px] text-slate-400 mt-1">Pemasukan penjualan</span>
             </div>
 
-            <!-- 3. Total Belanja -->
-            <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
+            <!-- 3. Total Belanja (BCA & Spay) -->
+            <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
                 <div class="flex items-center justify-between">
-                    <span class="text-[11px] font-semibold text-slate-500">Total Belanja</span>
-                    <i class="fa-solid fa-arrow-trend-down text-rose-500 text-xs"></i>
+                    <span class="text-xs font-semibold text-slate-500">Total Belanja</span>
+                    <i class="fa-solid fa-arrow-trend-down text-rose-500 text-sm"></i>
                 </div>
-                <h3 id="statTotalPengeluaran" class="text-base font-bold text-rose-600 mt-2">Rp 0</h3>
-                <span class="text-[10px] text-slate-400 mt-1">Pengeluaran modal</span>
+                <h3 id="statTotalPengeluaran" class="text-lg font-bold text-rose-600 mt-2">Rp 0</h3>
+                <span class="text-[10px] text-slate-400 mt-1">Via BCA / ShopeePay</span>
             </div>
 
-            <!-- 4. Sisa Kas Fisik Harian -->
-            <div class="bg-indigo-50/50 p-3 rounded-xl border border-indigo-200 shadow-sm flex flex-col justify-between">
+            <!-- 4. Sisa Kas Fisik (Murni: Modal Awal + Penjualan) -->
+            <div class="bg-emerald-50/60 p-3.5 rounded-xl border-2 border-emerald-300 shadow-sm flex flex-col justify-between">
                 <div class="flex items-center justify-between">
-                    <span class="text-[11px] font-bold text-indigo-900">Sisa Kas Fisik</span>
-                    <i class="fa-solid fa-cash-register text-indigo-600 text-xs"></i>
+                    <span class="text-xs font-bold text-emerald-900">Sisa Kas Fisik</span>
+                    <i class="fa-solid fa-cash-register text-emerald-600 text-sm"></i>
                 </div>
-                <h3 id="statSaldoKas" class="text-base font-extrabold text-indigo-700 mt-2">Rp 0</h3>
-                <span class="text-[10px] text-indigo-500 mt-1">Uang laci/tunai harian</span>
+                <h3 id="statSaldoKas" class="text-lg font-extrabold text-emerald-700 mt-2">Rp 0</h3>
+                <span class="text-[10px] text-emerald-600 mt-1 font-medium">Modal + Penjualan (Utuh)</span>
             </div>
 
-            <!-- 5. Uang Cash (Fisik Bersih Keseluruhan) -->
-            <div class="bg-white p-3 rounded-xl border border-emerald-200 shadow-sm flex flex-col justify-between">
+            <!-- 5. Bank BCA -->
+            <div class="bg-white p-3.5 rounded-xl border border-blue-200 shadow-sm flex flex-col justify-between">
                 <div class="flex items-center justify-between">
-                    <span class="text-[11px] font-bold text-emerald-800">Uang Cash</span>
-                    <button onclick="checkAdminThenExecute(() => editSaldoBankDialog('Cash'))" title="Update Uang Cash" class="text-emerald-600 hover:text-emerald-800 text-xs no-print">
-                        <i class="fa-solid fa-pen-to-square"></i>
-                    </button>
-                </div>
-                <h3 id="statUangCash" class="text-base font-bold text-emerald-600 mt-2">Rp 0</h3>
-                <span class="text-[10px] text-slate-400 mt-1">Kas tunai fisik</span>
-            </div>
-
-            <!-- 6. Bank BCA -->
-            <div class="bg-white p-3 rounded-xl border border-blue-200 shadow-sm flex flex-col justify-between">
-                <div class="flex items-center justify-between">
-                    <span class="text-[11px] font-bold text-blue-800">Bank BCA</span>
+                    <span class="text-xs font-bold text-blue-800">Bank BCA</span>
                     <button onclick="checkAdminThenExecute(() => editSaldoBankDialog('BCA'))" title="Update Saldo BCA" class="text-blue-600 hover:text-blue-800 text-xs no-print">
                         <i class="fa-solid fa-pen-to-square"></i>
                     </button>
                 </div>
-                <h3 id="statSaldoBCA" class="text-base font-bold text-blue-600 mt-2">Rp 0</h3>
+                <h3 id="statSaldoBCA" class="text-lg font-bold text-blue-600 mt-2">Rp 0</h3>
                 <span class="text-[10px] text-slate-400 mt-1">Rekening BCA</span>
             </div>
 
-            <!-- 7. ShopeePay -->
-            <div class="bg-white p-3 rounded-xl border border-amber-200 shadow-sm flex flex-col justify-between">
+            <!-- 6. ShopeePay -->
+            <div class="bg-white p-3.5 rounded-xl border border-amber-200 shadow-sm flex flex-col justify-between">
                 <div class="flex items-center justify-between">
-                    <span class="text-[11px] font-bold text-amber-800">ShopeePay</span>
+                    <span class="text-xs font-bold text-amber-800">ShopeePay</span>
                     <button onclick="checkAdminThenExecute(() => editSaldoBankDialog('ShopeePay'))" title="Update Saldo ShopeePay" class="text-amber-600 hover:text-amber-800 text-xs no-print">
                         <i class="fa-solid fa-pen-to-square"></i>
                     </button>
                 </div>
-                <h3 id="statSaldoShopeepay" class="text-base font-bold text-amber-600 mt-2">Rp 0</h3>
+                <h3 id="statSaldoShopeepay" class="text-lg font-bold text-amber-600 mt-2">Rp 0</h3>
                 <span class="text-[10px] text-slate-400 mt-1">E-Wallet Shopee</span>
             </div>
 
-            <!-- 8. Total Saldo (Cash + BCA + Spay) -->
-            <div class="bg-gradient-to-br from-indigo-600 to-indigo-800 text-white p-3 rounded-xl shadow-md flex flex-col justify-between border border-indigo-900">
+            <!-- 7. Total Saldo (Kas Fisik + BCA + ShopeePay) -->
+            <div class="bg-gradient-to-br from-indigo-600 to-indigo-800 text-white p-3.5 rounded-xl shadow-md flex flex-col justify-between border border-indigo-900">
                 <div class="flex items-center justify-between">
-                    <span class="text-[11px] font-bold text-indigo-100">Total Saldo</span>
-                    <i class="fa-solid fa-wallet text-amber-300 text-xs"></i>
+                    <span class="text-xs font-bold text-indigo-100">Total Saldo</span>
+                    <i class="fa-solid fa-wallet text-amber-300 text-sm"></i>
                 </div>
-                <h3 id="statTotalSemuaSaldo" class="text-base font-extrabold text-white mt-2">Rp 0</h3>
-                <span class="text-[10px] text-indigo-200 mt-1">Cash + BCA + Spay</span>
+                <h3 id="statTotalSemuaSaldo" class="text-lg font-extrabold text-white mt-2">Rp 0</h3>
+                <span class="text-[10px] text-indigo-200 mt-1">Kas Fisik + BCA + Spay</span>
             </div>
         </section>
 
@@ -247,7 +235,7 @@
                 </div>
             </div>
 
-            <!-- FORM 2: INPUT CATATAN PEMBELANJAAN -->
+            <!-- FORM 2: INPUT CATATAN PEMBELANJAAN (DENGAN SUMBER DANA BCA / SPAY) -->
             <div id="panelPengeluaran" class="hidden">
                 <form id="expenseForm" onsubmit="handleTambahPengeluaran(event)" class="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
                     
@@ -263,8 +251,8 @@
                         <input type="text" id="expenseNameInput" placeholder="Contoh: Beras, Saus, Teh" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-rose-500 focus:outline-none" required>
                     </div>
 
-                    <div class="md:col-span-3">
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Kategori Belanja</label>
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Kategori</label>
                         <select id="expenseCategoryInput" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-rose-500 focus:outline-none">
                             <option value="Bahan Baku Ricebowl">Bahan Baku Ricebowl</option>
                             <option value="Bahan Baku Milk Tea">Bahan Baku Milk Tea</option>
@@ -272,8 +260,17 @@
                         </select>
                     </div>
 
+                    <!-- PILIHAN SUMBER DANA: BCA ATAU SHOPEEPAY -->
                     <div class="md:col-span-2">
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Nominal Biaya (Rp)</label>
+                        <label class="block text-xs font-bold text-indigo-700 mb-1">Sumber Dana / Bayar Pakai</label>
+                        <select id="expenseSourceInput" class="w-full bg-indigo-50 border border-indigo-300 rounded-lg p-2.5 text-sm font-semibold text-indigo-800 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                            <option value="BCA">Bank BCA</option>
+                            <option value="ShopeePay">ShopeePay</option>
+                        </select>
+                    </div>
+
+                    <div class="md:col-span-1">
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Nominal (Rp)</label>
                         <input type="text" id="expenseCostInput" placeholder="Rp 0" oninput="formatRupiahInput(this)" class="w-full bg-white border border-rose-300 rounded-lg p-2.5 text-sm font-bold text-rose-600 focus:ring-2 focus:ring-rose-500 focus:outline-none" required>
                     </div>
 
@@ -283,8 +280,9 @@
                         </button>
                     </div>
                 </form>
-                <div class="mt-3 text-xs text-slate-500 border-t pt-2">
-                    <span>*Semua belanjaan akan otomatis memotong total keuangan kas fisik yang dimiliki.</span>
+                <div class="mt-3 text-xs text-slate-500 border-t pt-2 flex items-center gap-2">
+                    <i class="fa-solid fa-circle-info text-indigo-600"></i>
+                    <span>*Belanja akan otomatis memotong saldo <strong>Bank BCA</strong> atau <strong>ShopeePay</strong>. Kas fisik di laci tetap utuh!</span>
                 </div>
             </div>
         </section>
@@ -424,14 +422,14 @@
             </div>
         </section>
 
-        <!-- TABEL 2: REKAPITULASI CATATAN PEMBELANJAAN -->
+        <!-- TABEL 2: REKAPITULASI CATATAN PEMBELANJAAN (DENGAN SUMBER DANA) -->
         <section class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
             <div class="p-4 border-b flex flex-wrap justify-between items-center gap-3 bg-slate-50/50">
                 <div>
                     <h2 class="text-base font-bold text-slate-800 flex items-center gap-2">
                         <i class="fa-solid fa-basket-shopping text-rose-600"></i> Catatan Pembelanjaan (Pengeluaran Modal)
                     </h2>
-                    <p class="text-xs text-slate-500">Rincian biaya modal bahan baku atau operasional</p>
+                    <p class="text-xs text-slate-500">Rincian belanja bahan & operasional yang dibayar via BCA / ShopeePay</p>
                 </div>
             </div>
 
@@ -442,7 +440,8 @@
                             <th class="py-3 px-4 text-center w-12">No</th>
                             <th class="py-3 px-4">Tanggal</th>
                             <th class="py-3 px-4">Nama Keperluan / Belanja</th>
-                            <th class="py-3 px-4 text-center">Kategori</th>
+                            <th class="py-3 px-4">Kategori</th>
+                            <th class="py-3 px-4 text-center">Sumber Dana</th>
                             <th class="py-3 px-4 text-right">Biaya Pengeluaran</th>
                             <th class="py-3 px-4 text-center w-24 no-print">Aksi</th>
                         </tr>
@@ -450,7 +449,7 @@
                     <tbody id="expenseTableBody" class="divide-y divide-slate-100"></tbody>
                     <tfoot class="bg-slate-50 font-bold text-slate-800 border-t-2 border-slate-300">
                         <tr>
-                            <td colspan="4" class="py-3 px-4 text-right uppercase tracking-wider text-xs">Total Pengeluaran Belanja:</td>
+                            <td colspan="5" class="py-3 px-4 text-right uppercase tracking-wider text-xs">Total Pengeluaran Belanja:</td>
                             <td id="tableTotalExpense" class="py-3 px-4 text-right text-rose-600 text-base">Rp 0</td>
                             <td class="no-print"></td>
                         </tr>
@@ -715,13 +714,13 @@
         </div>
     </div>
 
-    <!-- MODAL UPDATE SALDO BANK / SHOPEEPAY / CASH -->
+    <!-- MODAL UPDATE SALDO BANK BCA / SHOPEEPAY -->
     <div id="bankDialog" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm hidden items-center justify-center p-4">
         <div class="bg-white rounded-2xl max-w-sm w-full p-5 shadow-2xl animate-pop border border-slate-200">
             <h3 id="bankDialogTitle" class="text-base font-bold text-slate-800 mb-1 flex items-center gap-2">
                 <i class="fa-solid fa-building-columns text-blue-600"></i> Update Saldo
             </h3>
-            <p class="text-xs text-slate-500 mb-3">Perbarui saldo rekening, e-wallet, atau uang tunai:</p>
+            <p class="text-xs text-slate-500 mb-3">Perbarui saldo rekening atau e-wallet saat ini:</p>
             
             <input type="hidden" id="bankTargetType">
             <div class="mb-4">
@@ -805,8 +804,7 @@
         let currentPricing = JSON.parse(localStorage.getItem("dagangan_pricing")) || DEFAULT_PRICING;
         let modalAwalMap = JSON.parse(localStorage.getItem("dagangan_modal_harian_map")) || {};
         
-        // Saldo Keuangan: Cash, BCA, dan ShopeePay
-        let saldoCash = parseInt(localStorage.getItem("dagangan_saldo_cash")) || 0;
+        // Saldo Keuangan: BCA dan ShopeePay
         let saldoBCA = parseInt(localStorage.getItem("dagangan_saldo_bca")) || 0;
         let saldoShopeepay = parseInt(localStorage.getItem("dagangan_saldo_shopeepay")) || 0;
 
@@ -921,7 +919,7 @@
             handlePeriodTypeChange();
         }
 
-        // ==================== SINKRONISASI BEBAS BLOKIR CORS DENGAN GOOGLE SHEETS ====================
+        // ==================== SINKRONISASI GOOGLE SHEETS ====================
         function sinkronDariGoogleSheets(isManualClick = false) {
             if (!GOOGLE_SHEET_URL) return;
 
@@ -1021,7 +1019,7 @@
             return true;
         }
 
-        // ==================== DROPDOWN & DIALOG CETAK REKAP SPESIFIK ====================
+        // ==================== CETAK REKAP ====================
         function toggleCetakDropdown(event) {
             event.stopPropagation();
             const menu = document.getElementById("cetakDropdownMenu");
@@ -1319,6 +1317,13 @@
                         </select>
                     </div>
                     <div>
+                        <label class="block mb-1">Sumber Dana</label>
+                        <select id="modalEditSource" class="w-full border p-2 rounded-lg bg-white font-bold text-indigo-800">
+                            <option value="BCA" ${item.sumberDana === 'BCA' ? 'selected' : ''}>Bank BCA</option>
+                            <option value="ShopeePay" ${item.sumberDana === 'ShopeePay' ? 'selected' : ''}>ShopeePay</option>
+                        </select>
+                    </div>
+                    <div>
                         <label class="block mb-1">Nominal Biaya (Rp)</label>
                         <input type="text" id="modalEditNominal" value="${formatRp(item.nominal)}" oninput="formatRupiahInput(this)" class="w-full border p-2 rounded-lg font-bold text-rose-600">
                     </div>
@@ -1364,6 +1369,7 @@
             } else {
                 const nama = document.getElementById("modalEditName").value.trim();
                 const kategori = document.getElementById("modalEditCategory").value;
+                const sumberDana = document.getElementById("modalEditSource").value;
                 const nominal = parseRupiahInput(document.getElementById("modalEditNominal"));
 
                 if (!nama || nominal <= 0) {
@@ -1373,9 +1379,23 @@
 
                 const index = pengeluaranList.findIndex(p => p.id === id);
                 if (index !== -1) {
+                    // Kembalikan saldo lama
+                    const oldSumber = pengeluaranList[index].sumberDana || "BCA";
+                    const oldNominal = pengeluaranList[index].nominal || 0;
+                    if (oldSumber === "BCA") saldoBCA += oldNominal;
+                    else saldoShopeepay += oldNominal;
+
+                    // Potong saldo baru
+                    if (sumberDana === "BCA") saldoBCA = Math.max(0, saldoBCA - nominal);
+                    else saldoShopeepay = Math.max(0, saldoShopeepay - nominal);
+
+                    localStorage.setItem("dagangan_saldo_bca", saldoBCA);
+                    localStorage.setItem("dagangan_saldo_shopeepay", saldoShopeepay);
+
                     pengeluaranList[index].tanggal = newDate;
                     pengeluaranList[index].nama = nama;
                     pengeluaranList[index].kategori = kategori;
+                    pengeluaranList[index].sumberDana = sumberDana;
                     pengeluaranList[index].nominal = nominal;
 
                     localStorage.setItem("dagangan_pengeluaran", JSON.stringify(pengeluaranList));
@@ -1597,11 +1617,21 @@
             const tglDipilih = document.getElementById("expenseDateInput").value;
             const nama = document.getElementById("expenseNameInput").value.trim();
             const kategori = document.getElementById("expenseCategoryInput").value;
+            const sumberDana = document.getElementById("expenseSourceInput").value;
             const nominal = parseRupiahInput(document.getElementById("expenseCostInput"));
 
             if (!nama || nominal <= 0) {
                 showCenterToast("Mohon masukkan nama keperluan & nominal belanja!", "error");
                 return;
+            }
+
+            // Potong langsung saldo sumber dana yang dipilih (BCA atau ShopeePay)
+            if (sumberDana === "BCA") {
+                saldoBCA = Math.max(0, saldoBCA - nominal);
+                localStorage.setItem("dagangan_saldo_bca", saldoBCA);
+            } else if (sumberDana === "ShopeePay") {
+                saldoShopeepay = Math.max(0, saldoShopeepay - nominal);
+                localStorage.setItem("dagangan_saldo_shopeepay", saldoShopeepay);
             }
 
             const dataPengeluaran = {
@@ -1611,6 +1641,7 @@
                 tanggal: tglDipilih,
                 nama: nama,
                 kategori: kategori,
+                sumberDana: sumberDana,
                 nominal: nominal
             };
 
@@ -1629,7 +1660,7 @@
             document.getElementById("expenseNameInput").value = "";
             document.getElementById("expenseCostInput").value = "";
             renderSemuaTabel();
-            showCenterToast("Pengeluaran belanja berhasil dicatat!");
+            showCenterToast(`Belanja disimpan (Dipotong dari ${sumberDana})!`);
         }
 
         function renderSemuaTabel() {
@@ -1682,10 +1713,12 @@
             let totalPengeluaran = 0;
 
             if (filteredPengeluaran.length === 0) {
-                tbodyBelanja.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-slate-400 italic">Belum ada catatan pembelanjaan pada periode ini.</td></tr>`;
+                tbodyBelanja.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-slate-400 italic">Belum ada catatan pembelanjaan pada periode ini.</td></tr>`;
             } else {
                 filteredPengeluaran.forEach((item, index) => {
                     totalPengeluaran += item.nominal;
+                    const sumber = item.sumberDana || "BCA";
+                    const badgeClass = sumber === 'BCA' ? 'bg-blue-50 text-blue-700 border-blue-200' : 'bg-amber-50 text-amber-700 border-amber-200';
 
                     const tr = document.createElement("tr");
                     tr.className = "hover:bg-slate-50/70 border-b";
@@ -1694,6 +1727,7 @@
                         <td class="py-3 px-4 text-xs font-semibold text-slate-700">${formatTanggalLengkapIndo(item.tanggal)}</td>
                         <td class="py-3 px-4 font-bold text-slate-800">${item.nama}</td>
                         <td class="py-3 px-4 text-xs"><span class="bg-slate-100 text-slate-700 px-2 py-0.5 rounded font-medium">${item.kategori}</span></td>
+                        <td class="py-3 px-4 text-center text-xs"><span class="px-2 py-0.5 rounded-full font-bold border ${badgeClass}">${sumber}</span></td>
                         <td class="py-3 px-4 text-right font-bold text-rose-600">${formatRp(item.nominal)}</td>
                         <td class="py-3 px-4 text-center no-print">
                             <div class="flex items-center justify-center space-x-2">
@@ -1714,21 +1748,19 @@
             document.getElementById("tableTotalNominal").textContent = formatRp(totalPenjualan);
             document.getElementById("tableTotalExpense").textContent = formatRp(totalPengeluaran);
 
-            // Perhitungan Kas Fisik Harian
-            const saldoKasFisik = modalAwalHariIni + totalPenjualan - totalPengeluaran;
+            // SISA KAS FISIK MURNI: MODAL KAS AWAL + TOTAL PENJUALAN (TIDAK DIPOTONG BELANJA)
+            const saldoKasFisikMurni = modalAwalHariIni + totalPenjualan;
             
-            // Total Saldo Keseluruhan (Cash + BCA + ShopeePay)
-            const totalSemuaSaldo = saldoCash + saldoBCA + saldoShopeepay;
+            // TOTAL SALDO GABUNGAN: KAS FISIK + BCA + SHOPEEPAY
+            const totalSemuaSaldo = saldoKasFisikMurni + saldoBCA + saldoShopeepay;
 
-            // Update Kartu Statistik
+            // Update Tampilan Kartu
             document.getElementById("statModalAwal").textContent = formatRp(modalAwalHariIni);
             document.getElementById("labelTanggalModal").textContent = formatTanggalLengkapIndo(activeDate);
             document.getElementById("statTotalPendapatan").textContent = formatRp(totalPenjualan);
             document.getElementById("statTotalPengeluaran").textContent = formatRp(totalPengeluaran);
-            document.getElementById("statSaldoKas").textContent = formatRp(saldoKasFisik);
+            document.getElementById("statSaldoKas").textContent = formatRp(saldoKasFisikMurni);
 
-            // Saldo Dompet & Bank
-            document.getElementById("statUangCash").textContent = formatRp(saldoCash);
             document.getElementById("statSaldoBCA").textContent = formatRp(saldoBCA);
             document.getElementById("statSaldoShopeepay").textContent = formatRp(saldoShopeepay);
             document.getElementById("statTotalSemuaSaldo").textContent = formatRp(totalSemuaSaldo);
@@ -1752,10 +1784,22 @@
 
         function hapusPengeluaran(id) {
             showConfirmModal("Hapus Pengeluaran", "Apakah Anda yakin ingin menghapus catatan belanja ini?", () => {
+                const item = pengeluaranList.find(p => p.id === id);
+                if (item) {
+                    // Kembalikan saldo ke rekening semula saat belanja dihapus
+                    const sumber = item.sumberDana || "BCA";
+                    if (sumber === "BCA") {
+                        saldoBCA += item.nominal;
+                        localStorage.setItem("dagangan_saldo_bca", saldoBCA);
+                    } else {
+                        saldoShopeepay += item.nominal;
+                        localStorage.setItem("dagangan_saldo_shopeepay", saldoShopeepay);
+                    }
+                }
                 pengeluaranList = pengeluaranList.filter(t => t.id !== id);
                 localStorage.setItem("dagangan_pengeluaran", JSON.stringify(pengeluaranList));
                 renderSemuaTabel();
-                showCenterToast("Catatan belanja dihapus");
+                showCenterToast("Catatan belanja dihapus & saldo dikembalikan!");
             });
         }
 
@@ -1812,7 +1856,7 @@
             showCenterToast(`Modal awal ${formatTanggalLengkapIndo(dateVal)} disimpan!`);
         }
 
-        // ==================== DIALOG UPDATE SALDO CASH / BCA / SHOPEEPAY ====================
+        // ==================== DIALOG UPDATE SALDO BCA / SHOPEEPAY ====================
         function editSaldoBankDialog(type) {
             const dialog = document.getElementById("bankDialog");
             const titleEl = document.getElementById("bankDialogTitle");
@@ -1821,11 +1865,7 @@
             const nominalInput = document.getElementById("bankInputNominal");
 
             typeInput.value = type;
-            if (type === 'Cash') {
-                titleEl.innerHTML = '<i class="fa-solid fa-money-bill-wave text-emerald-600"></i> Saldo Uang Cash';
-                labelEl.textContent = 'Nominal Uang Cash Fisik Saat Ini';
-                nominalInput.value = saldoCash > 0 ? formatRp(saldoCash) : '';
-            } else if (type === 'BCA') {
+            if (type === 'BCA') {
                 titleEl.innerHTML = '<i class="fa-solid fa-building-columns text-blue-600"></i> Saldo Rekening Bank BCA';
                 labelEl.textContent = 'Nominal Saldo BCA Terkini';
                 nominalInput.value = saldoBCA > 0 ? formatRp(saldoBCA) : '';
@@ -1849,11 +1889,7 @@
             const type = document.getElementById("bankTargetType").value;
             const nominal = parseRupiahInput(document.getElementById("bankInputNominal"));
 
-            if (type === 'Cash') {
-                saldoCash = nominal;
-                localStorage.setItem("dagangan_saldo_cash", saldoCash);
-                showCenterToast("Saldo Uang Cash berhasil diperbarui!");
-            } else if (type === 'BCA') {
+            if (type === 'BCA') {
                 saldoBCA = nominal;
                 localStorage.setItem("dagangan_saldo_bca", saldoBCA);
                 showCenterToast("Saldo Bank BCA berhasil diperbarui!");
@@ -1911,8 +1947,8 @@
                 totalBelanja += p.nominal;
             });
 
-            const sisaKasFisik = modalAwalHariIni + totalPenjualan - totalBelanja;
-            const totalSemuaSaldo = saldoCash + saldoBCA + saldoShopeepay;
+            const sisaKasFisikMurni = modalAwalHariIni + totalPenjualan;
+            const totalSemuaSaldo = sisaKasFisikMurni + saldoBCA + saldoShopeepay;
 
             let csv = "data:text/csv;charset=utf-8,";
             
@@ -1921,11 +1957,10 @@
             csv += `Modal Kas Awal,${modalAwalHariIni}\n`;
             csv += `Total Penjualan (${totalQtyPenjualan} Porsi),${totalPenjualan}\n`;
             csv += `Total Belanja Pengeluaran,${totalBelanja}\n`;
-            csv += `Sisa Saldo Kas Fisik (Tunai Harian),${sisaKasFisik}\n`;
-            csv += `Uang Cash,${saldoCash}\n`;
+            csv += `Sisa Saldo Kas Fisik Laci (Modal + Penjualan),${sisaKasFisikMurni}\n`;
             csv += `Saldo Rekening Bank BCA,${saldoBCA}\n`;
             csv += `Saldo ShopeePay,${saldoShopeepay}\n`;
-            csv += `Total Saldo (Cash + BCA + Spay),${totalSemuaSaldo}\n\n`;
+            csv += `Total Saldo (Kas Fisik + BCA + Spay),${totalSemuaSaldo}\n\n`;
 
             csv += "=== RINCIAN REKAPITULASI PENJUALAN ===\n";
             csv += "No,Tanggal Penjualan,Menu Dagangan,Harga Satuan,Qty,Subtotal\n";
@@ -1936,10 +1971,11 @@
             });
 
             csv += "\n=== RINCIAN CATATAN PEMBELANJAAN ===\n";
-            csv += "No,Tanggal Belanja,Nama Keperluan Belanja,Kategori,Biaya Pengeluaran\n";
+            csv += "No,Tanggal Belanja,Nama Keperluan Belanja,Kategori,Sumber Dana,Biaya Pengeluaran\n";
             filteredPengeluaran.forEach((item, index) => {
                 const tgl = formatTanggalLengkapIndo(item.tanggal);
-                csv += `${index + 1},"${tgl}","${item.nama}","${item.kategori}",${item.nominal}\n`;
+                const sumber = item.sumberDana || "BCA";
+                csv += `${index + 1},"${tgl}","${item.nama}","${item.kategori}","${sumber}",${item.nominal}\n`;
             });
 
             const encodedUri = encodeURI(csv);
@@ -2052,4 +2088,34 @@
         }
 
         function updateRoleUI(isAdmin) {
-            const badge = document.getElementById("roleBadge
+            const badge = document.getElementById("roleBadge");
+            const notice = document.getElementById("adminNotice");
+            const authBtn = document.getElementById("authBtn");
+            const btnUbahHarga = document.getElementById("btnHeaderUbahHarga");
+
+            if (isAdmin) {
+                badge.className = "bg-amber-500 text-white text-xs px-3.5 py-1.5 rounded-full font-semibold uppercase tracking-wider flex items-center gap-1.5 shadow-sm";
+                badge.innerHTML = '<i class="fa-solid fa-shield-halved"></i> Admin';
+                notice.classList.remove("hidden");
+                btnUbahHarga.classList.remove("hidden");
+                authBtn.className = "bg-rose-700 hover:bg-rose-800 text-xs px-3.5 py-1.5 rounded-lg transition font-medium border border-rose-500 flex items-center gap-1.5 shadow-sm text-white";
+                authBtn.innerHTML = '<i class="fa-solid fa-right-from-bracket"></i> <span>Logout</span>';
+            } else {
+                badge.className = "bg-emerald-500 text-white text-xs px-3.5 py-1.5 rounded-full font-semibold uppercase tracking-wider flex items-center gap-1.5 shadow-sm";
+                badge.innerHTML = '<i class="fa-solid fa-user"></i> User';
+                notice.classList.add("hidden");
+                btnUbahHarga.classList.add("hidden");
+                authBtn.className = "bg-indigo-900 hover:bg-indigo-950 text-xs px-3.5 py-1.5 rounded-lg transition font-medium border border-indigo-500 flex items-center gap-1.5 shadow-sm text-white";
+                authBtn.innerHTML = '<i class="fa-solid fa-lock"></i> <span>Login</span>';
+            }
+        }
+
+        window.onload = function() {
+            initMenuOptions();
+            initDefaultDates();
+            renderSemuaTabel();
+            sinkronDariGoogleSheets(false);
+        };
+    </script>
+</body>
+</html>
