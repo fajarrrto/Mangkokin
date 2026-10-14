@@ -93,7 +93,7 @@
             </div>
         </div>
 
-        <!-- 7 KARTU RINGKASAN KEUANGAN -->
+        <!-- 7 KARTU RINGKASAN KEUANGAN (DENGAN EDIT KAS FISIK KHUSUS ADMIN) -->
         <section class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
             <!-- 1. Modal Kas Awal -->
             <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
@@ -127,14 +127,16 @@
                 <span class="text-[10px] text-slate-400 mt-1">Pengeluaran belanja modal</span>
             </div>
 
-            <!-- 4. Sisa Kas Fisik -->
+            <!-- 4. Sisa Kas Fisik (Dengan Tombol Edit Khusus Mode Admin) -->
             <div class="bg-emerald-50/60 p-3.5 rounded-xl border-2 border-emerald-300 shadow-sm flex flex-col justify-between">
                 <div class="flex items-center justify-between">
                     <span class="text-xs font-bold text-emerald-900">Sisa Kas Fisik</span>
-                    <i class="fa-solid fa-cash-register text-emerald-600 text-sm"></i>
+                    <button onclick="checkAdminThenExecute(editKasFisikDialog)" title="Koreksi Kas Fisik (Mode Admin)" class="text-emerald-700 hover:text-emerald-900 text-xs no-print">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                    </button>
                 </div>
                 <h3 id="statSaldoKas" class="text-lg font-extrabold text-emerald-700 mt-2">Rp 0</h3>
-                <span class="text-[10px] text-emerald-600 mt-1 font-medium">Uang laci/tas fisik kasir</span>
+                <span id="labelKasFisikStatus" class="text-[10px] text-emerald-600 mt-1 font-medium">Uang laci/tas fisik kasir</span>
             </div>
 
             <!-- 5. Bank BCA -->
@@ -200,13 +202,11 @@
                         </select>
                     </div>
 
-                    <!-- Kolom Input Nama Menu Manual -->
                     <div id="customMenuWrapper" class="hidden md:col-span-3">
                         <label class="block text-xs font-bold text-indigo-700 mb-1">Ketik Nama Menu Baru</label>
                         <input type="text" id="customMenuNameInput" placeholder="Contoh: Ricebowl Spesial / Es Kopi" class="w-full bg-white border border-indigo-400 rounded-lg p-2.5 text-sm font-semibold text-slate-800 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
                     </div>
 
-                    <!-- Harga Satuan Bisa Diedit Sendiri -->
                     <div id="unitPriceCol" class="md:col-span-2">
                         <label class="block text-xs font-semibold text-slate-600 mb-1">
                             Harga Satuan (Rp) <span class="text-[10px] text-indigo-600 font-normal">(Bisa Diedit)</span>
@@ -464,6 +464,26 @@
         </section>
 
     </main>
+
+    <!-- MODAL EDIT KAS FISIK SECARA MANUAL (KHUSUS MODE ADMIN) -->
+    <div id="kasFisikDialog" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-sm w-full p-5 shadow-2xl animate-pop border border-slate-200">
+            <h3 class="text-base font-bold text-slate-800 mb-1 flex items-center gap-2">
+                <i class="fa-solid fa-cash-register text-emerald-600"></i> Koreksi Sisa Kas Fisik
+            </h3>
+            <p class="text-xs text-slate-500 mb-4">Ubah nominal uang fisik laci secara manual untuk tanggal ini jika ada selisih uang:</p>
+
+            <div class="mb-4">
+                <label class="block text-xs font-semibold text-slate-600 mb-1">Nominal Uang Fisik Kasir (Rp)</label>
+                <input type="text" id="kasFisikManualInput" placeholder="Rp 0" oninput="formatRupiahInput(this)" class="w-full border border-emerald-300 rounded-lg p-2.5 font-bold text-emerald-700 text-base focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+            </div>
+
+            <div class="flex space-x-2">
+                <button onclick="closeKasFisikDialog()" class="flex-1 py-2 rounded-lg text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">Batal</button>
+                <button onclick="simpanKasFisikManual()" class="flex-1 py-2 rounded-lg text-xs font-semibold bg-emerald-600 text-white hover:bg-emerald-700 transition">Simpan Kas</button>
+            </div>
+        </div>
+    </div>
 
     <!-- MODAL PENGATURAN CETAK REKAP SPESIFIK -->
     <div id="printConfigModal" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm hidden items-center justify-center p-4">
@@ -809,6 +829,9 @@
         let currentPricing = JSON.parse(localStorage.getItem("dagangan_pricing")) || DEFAULT_PRICING;
         let modalAwalMap = JSON.parse(localStorage.getItem("dagangan_modal_harian_map")) || {};
         
+        // Simpan manual override untuk kas fisik jika diedit oleh admin
+        let manualKasFisikMap = JSON.parse(localStorage.getItem("dagangan_manual_kas_fisik_map")) || {};
+
         let saldoBCA = parseInt(localStorage.getItem("dagangan_saldo_bca")) || 0;
         let saldoShopeepay = parseInt(localStorage.getItem("dagangan_saldo_shopeepay")) || 0;
 
@@ -839,20 +862,17 @@
             return parseInt(raw) || 0;
         }
 
-        // ==================== FUNGSI FORMAT TANGGAL YANG DIPERBAIKI (ANTI-UNDEFINED & ANTI-NAN) ====================
         function parseTanggalStandard(dateInput) {
             if (!dateInput) return null;
             if (dateInput instanceof Date && !isNaN(dateInput)) return dateInput;
 
             let str = String(dateInput).trim();
             
-            // Format YYYY-MM-DD
             if (/^\d{4}-\d{2}-\d{2}/.test(str)) {
                 let parts = str.split('T')[0].split('-');
                 return new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
             }
             
-            // Format DD/MM/YYYY
             if (/^\d{1,2}\/\d{1,2}\/\d{4}/.test(str)) {
                 let parts = str.split('/');
                 return new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0]));
@@ -1316,6 +1336,46 @@
             }
 
             document.getElementById("liveCalculationText").textContent = `${qty} x ${formatRp(unitPrice)} = ${formatRp(total)}`;
+        }
+
+        // ==================== DIALOG KAS FISIK KHUSUS MODE ADMIN ====================
+        function editKasFisikDialog() {
+            const activeDate = getActiveDate();
+            const modal = document.getElementById("kasFisikDialog");
+            const input = document.getElementById("kasFisikManualInput");
+
+            // Ambil nilai saat ini
+            let currentVal = manualKasFisikMap[activeDate];
+            if (currentVal === undefined) {
+                const modalAwal = modalAwalMap[activeDate] || 0;
+                const filteredTransaksi = transaksiList.filter(item => isItemInFilteredPeriod(item.tanggal));
+                const filteredPengeluaran = pengeluaranList.filter(item => isItemInFilteredPeriod(item.tanggal));
+                let totalJual = filteredTransaksi.reduce((sum, t) => sum + t.subtotal, 0);
+                let belanjaKas = filteredPengeluaran.filter(p => (p.sumberDana || 'Kas Fisik') === 'Kas Fisik').reduce((sum, p) => sum + p.nominal, 0);
+                currentVal = modalAwal + totalJual - belanjaKas;
+            }
+
+            input.value = currentVal > 0 ? formatRp(currentVal) : '';
+            modal.classList.remove("hidden");
+            modal.classList.add("flex");
+        }
+
+        function closeKasFisikDialog() {
+            const modal = document.getElementById("kasFisikDialog");
+            modal.classList.add("hidden");
+            modal.classList.remove("flex");
+        }
+
+        function simpanKasFisikManual() {
+            const activeDate = getActiveDate();
+            const nominal = parseRupiahInput(document.getElementById("kasFisikManualInput"));
+
+            manualKasFisikMap[activeDate] = nominal;
+            localStorage.setItem("dagangan_manual_kas_fisik_map", JSON.stringify(manualKasFisikMap));
+
+            renderSemuaTabel();
+            closeKasFisikDialog();
+            showCenterToast("Kas fisik harian berhasil disesuaikan!");
         }
 
         // ==================== EDIT DATA TRANSAKSI ====================
@@ -1843,9 +1903,20 @@
             document.getElementById("tableTotalNominal").textContent = formatRp(totalPenjualan);
             document.getElementById("tableTotalExpense").textContent = formatRp(totalPengeluaran);
 
-            const saldoKasFisikReal = modalAwalHariIni + totalPenjualan - belanjaKasFisik;
+            // SISA KAS FISIK: Dihitung Otomatis atau menggunakan penyesuaian manual Admin
+            let saldoKasFisikReal = manualKasFisikMap[activeDate];
+            const statusKasLabel = document.getElementById("labelKasFisikStatus");
+            if (saldoKasFisikReal === undefined) {
+                saldoKasFisikReal = modalAwalHariIni + totalPenjualan - belanjaKasFisik;
+                statusKasLabel.textContent = "Uang laci/tas fisik kasir";
+            } else {
+                statusKasLabel.textContent = "Disetel manual (Mode Admin)";
+            }
+            
+            // TOTAL SALDO GABUNGAN: SISA KAS FISIK + BCA + SHOPEEPAY
             const totalSemuaSaldo = saldoKasFisikReal + saldoBCA + saldoShopeepay;
 
+            // Update Tampilan Kartu
             document.getElementById("statModalAwal").textContent = formatRp(modalAwalHariIni);
             document.getElementById("labelTanggalModal").textContent = formatTanggalLengkapIndo(activeDate);
             document.getElementById("statTotalPendapatan").textContent = formatRp(totalPenjualan);
@@ -2040,7 +2111,10 @@
                 }
             });
 
-            const sisaKasFisikReal = modalAwalHariIni + totalPenjualan - belanjaKasFisik;
+            let sisaKasFisikReal = manualKasFisikMap[activeDate];
+            if (sisaKasFisikReal === undefined) {
+                sisaKasFisikReal = modalAwalHariIni + totalPenjualan - belanjaKasFisik;
+            }
             const totalSemuaSaldo = sisaKasFisikReal + saldoBCA + saldoShopeepay;
 
             let csv = "data:text/csv;charset=utf-8,";
