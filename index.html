@@ -72,8 +72,8 @@
                     <i class="fa-solid fa-user text-[10px]"></i> User
                 </span>
 
-                <button id="btnHeaderUbahHarga" onclick="bukaEditorHargaLangsung()" class="hidden bg-indigo-600 hover:bg-indigo-800 text-[11px] sm:text-xs px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-lg transition font-medium border border-indigo-400 flex items-center gap-1 shadow-sm text-white">
-                    <i class="fa-solid fa-tag"></i> <span>Ubah Harga</span>
+                <button id="btnHeaderAdminPanel" onclick="bukaPanelAdminLangsung()" class="hidden bg-indigo-600 hover:bg-indigo-800 text-[11px] sm:text-xs px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-lg transition font-medium border border-indigo-400 flex items-center gap-1 shadow-sm text-white">
+                    <i class="fa-solid fa-gear"></i> <span>Menu Admin</span>
                 </button>
 
                 <button id="authBtn" onclick="handleAuthAction()" class="bg-indigo-900 hover:bg-indigo-950 text-[11px] sm:text-xs px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-lg transition font-medium border border-indigo-500 flex items-center gap-1 shadow-sm">
@@ -86,14 +86,17 @@
     <main class="max-w-7xl mx-auto px-3 sm:px-4 py-4 sm:py-6 space-y-4 sm:space-y-6">
 
         <!-- Banner Info Admin Mode Aktif -->
-        <div id="adminNotice" class="hidden bg-amber-50 border-l-4 border-amber-500 p-3 rounded-r-lg shadow-sm flex items-center no-print">
+        <div id="adminNotice" class="hidden bg-amber-50 border-l-4 border-amber-500 p-3 rounded-r-lg shadow-sm flex items-center justify-between no-print">
             <div class="flex items-center text-amber-900 text-xs sm:text-sm font-medium">
                 <i class="fa-solid fa-shield-halved text-base sm:text-lg mr-2 sm:mr-3 text-amber-600"></i>
-                <span>Anda memiliki akses penuh mengubah harga menu, modal kas, saldo bank, dan Reset Data.</span>
+                <span>Mode Admin Aktif: Anda dapat mengubah harga, koreksi kas fisik, saldo bank, dan buka Master Sheet.</span>
             </div>
+            <button onclick="bukaPanelAdminLangsung()" class="bg-amber-600 hover:bg-amber-700 text-white text-xs px-3 py-1.5 rounded-lg font-bold shadow transition flex items-center gap-1 shrink-0 ml-2">
+                <i class="fa-solid fa-gear"></i> Menu Admin
+            </button>
         </div>
 
-        <!-- 7 KARTU RINGKASAN: DI HP TAMPIL 2 KOLOM RAPI & RINGKAS -->
+        <!-- 7 KARTU RINGKASAN: GRID 2 KOLOM DI HP -->
         <section class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-2.5 sm:gap-3">
             <!-- 1. Modal Kas Awal -->
             <div class="bg-white p-2.5 sm:p-3.5 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
@@ -163,7 +166,7 @@
                 <span class="text-[9px] sm:text-[10px] text-slate-400 mt-0.5 truncate">E-Wallet Shopee</span>
             </div>
 
-            <!-- 7. Total Saldo (Di HP Melebar Penuh 2 Kolom) -->
+            <!-- 7. Total Saldo -->
             <div class="col-span-2 md:col-span-2 lg:col-span-1 bg-gradient-to-br from-indigo-600 to-indigo-800 text-white p-2.5 sm:p-3.5 rounded-xl shadow-md flex flex-col justify-between border border-indigo-900">
                 <div class="flex items-center justify-between">
                     <span class="text-[11px] sm:text-xs font-bold text-indigo-100">Total Saldo</span>
@@ -185,11 +188,11 @@
                 </button>
             </div>
 
-            <!-- FORM 1: INPUT PENJUALAN -->
+            <!-- FORM 1: INPUT PENJUALAN (DENGAN PILIHAN TUJUAN PEMASUKAN) -->
             <div id="panelPenjualan">
                 <form id="salesForm" onsubmit="handleTambahTransaksi(event)" class="grid grid-cols-1 md:grid-cols-12 gap-2.5 sm:gap-3 items-end">
                     
-                    <div class="md:col-span-3">
+                    <div class="md:col-span-2">
                         <label class="block text-xs font-semibold text-slate-600 mb-1">
                             Tanggal: <span id="displayHariPenjualan" class="text-indigo-600 font-bold ml-1"></span>
                         </label>
@@ -205,6 +208,16 @@
                     <div id="customMenuWrapper" class="hidden md:col-span-3">
                         <label class="block text-xs font-bold text-indigo-700 mb-1">Nama Menu Baru</label>
                         <input type="text" id="customMenuNameInput" placeholder="Contoh: Ricebowl Spesial" class="w-full bg-white border border-indigo-400 rounded-lg p-2 sm:p-2.5 text-xs sm:text-sm font-semibold text-slate-800 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                    </div>
+
+                    <!-- Pilihan Tempat Masuk Uang (Dropdown Pemasukan) -->
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-bold text-indigo-700 mb-1">Masuk Ke</label>
+                        <select id="salesDestInput" class="w-full bg-indigo-50 border border-indigo-300 rounded-lg p-2 sm:p-2.5 text-xs sm:text-sm font-semibold text-indigo-800 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                            <option value="Kas Fisik">Tunai / Kas Fisik</option>
+                            <option value="BCA">Rekening BCA</option>
+                            <option value="ShopeePay">ShopeePay / Spay</option>
+                        </select>
                     </div>
 
                     <div id="unitPriceCol" class="md:col-span-2">
@@ -398,6 +411,7 @@
                             <th class="py-2.5 px-3 text-center w-8">No</th>
                             <th class="py-2.5 px-3">Tanggal</th>
                             <th class="py-2.5 px-3">Menu</th>
+                            <th class="py-2.5 px-3 text-center">Masuk Ke</th>
                             <th class="py-2.5 px-3 text-center">Harga</th>
                             <th class="py-2.5 px-3 text-center w-12">Qty</th>
                             <th class="py-2.5 px-3 text-right">Subtotal</th>
@@ -407,7 +421,7 @@
                     <tbody id="rekapTableBody" class="divide-y divide-slate-100"></tbody>
                     <tfoot class="bg-slate-50 font-bold text-slate-800 border-t-2 border-slate-300">
                         <tr>
-                            <td colspan="4" class="py-2.5 px-3 text-right uppercase tracking-wider text-[11px] sm:text-xs">Total Penjualan:</td>
+                            <td colspan="5" class="py-2.5 px-3 text-right uppercase tracking-wider text-[11px] sm:text-xs">Total Penjualan:</td>
                             <td id="tableTotalQty" class="py-2.5 px-3 text-center text-xs sm:text-sm">0</td>
                             <td id="tableTotalNominal" class="py-2.5 px-3 text-right text-emerald-600 text-sm sm:text-base">Rp 0</td>
                             <td class="no-print"></td>
@@ -453,6 +467,41 @@
         </section>
 
     </main>
+
+    <!-- MODAL MENU ADMIN (TERMASUK TOMBOL BUKA MASTER SHEET) -->
+    <div id="adminPanelModal" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl animate-pop border border-slate-200">
+            <div class="flex justify-between items-center border-b pb-3 mb-4">
+                <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
+                    <i class="fa-solid fa-gear text-indigo-600"></i> Menu Panel Admin
+                </h3>
+                <button onclick="closeAdminPanelModal()" class="text-slate-400 hover:text-slate-600 text-xl font-bold">&times;</button>
+            </div>
+
+            <div class="space-y-3">
+                <button onclick="bukaMasterSheet()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 px-4 rounded-xl text-xs sm:text-sm transition flex items-center justify-between shadow">
+                    <span class="flex items-center gap-2.5">
+                        <i class="fa-solid fa-file-excel text-base"></i> Buka Master Sheet Google Sheets
+                    </span>
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                </button>
+
+                <button onclick="closeAdminPanelModal(); bukaEditorHargaLangsung();" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-xl text-xs sm:text-sm transition flex items-center justify-between shadow">
+                    <span class="flex items-center gap-2.5">
+                        <i class="fa-solid fa-tag text-base"></i> Ubah Harga Satuan Menu
+                    </span>
+                    <i class="fa-solid fa-chevron-right text-xs"></i>
+                </button>
+
+                <button onclick="closeAdminPanelModal(); logoutAdmin();" class="w-full bg-rose-50 hover:bg-rose-100 text-rose-700 font-semibold py-3 px-4 rounded-xl text-xs sm:text-sm transition flex items-center justify-between border border-rose-200">
+                    <span class="flex items-center gap-2.5">
+                        <i class="fa-solid fa-right-from-bracket text-base"></i> Keluar (Logout) Mode Admin
+                    </span>
+                    <i class="fa-solid fa-lock text-xs"></i>
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- MODAL EDIT KAS FISIK SECARA MANUAL (KHUSUS MODE ADMIN) -->
     <div id="kasFisikDialog" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm hidden items-center justify-center p-4">
@@ -754,7 +803,7 @@
         <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl overflow-hidden animate-pop">
             <div class="bg-indigo-700 text-white p-4 flex justify-between items-center">
                 <h3 id="adminModalMainTitle" class="font-bold text-base flex items-center gap-2">
-                    <i class="fa-solid fa-user-gear"></i> Konfigurasi Admin
+                    <i class="fa-solid fa-lock"></i> Login Admin
                 </h3>
                 <button onclick="toggleAdminModal()" class="text-indigo-200 hover:text-white text-lg">&times;</button>
             </div>
@@ -804,6 +853,7 @@
     <!-- Script Logika Web -->
     <script>
         const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbwGAjAyh3jLmadumdzNYChmRUx9SYQZ2hDKkym2l23Gdv3n6BzvSbsRA5p09gu86jzW/exec";
+        const MASTER_SHEET_URL = "https://docs.google.com/spreadsheets/d/1Dakdvw420Qw9LwpMKARI1C85O81gOn5OunFaIQAxACA/edit";
 
         const DEFAULT_PRICING = {
             "Rice Bowl": 12000,
@@ -817,7 +867,6 @@
 
         let currentPricing = JSON.parse(localStorage.getItem("dagangan_pricing")) || DEFAULT_PRICING;
         let modalAwalMap = JSON.parse(localStorage.getItem("dagangan_modal_harian_map")) || {};
-        
         let manualKasFisikMap = JSON.parse(localStorage.getItem("dagangan_manual_kas_fisik_map")) || {};
 
         let saldoBCA = parseInt(localStorage.getItem("dagangan_saldo_bca")) || 0;
@@ -1337,9 +1386,9 @@
                 const modalAwal = modalAwalMap[activeDate] || 0;
                 const filteredTransaksi = transaksiList.filter(item => isItemInFilteredPeriod(item.tanggal));
                 const filteredPengeluaran = pengeluaranList.filter(item => isItemInFilteredPeriod(item.tanggal));
-                let totalJual = filteredTransaksi.reduce((sum, t) => sum + t.subtotal, 0);
+                let totalJualKas = filteredTransaksi.filter(t => (t.destinasiDana || 'Kas Fisik') === 'Kas Fisik').reduce((sum, t) => sum + t.subtotal, 0);
                 let belanjaKas = filteredPengeluaran.filter(p => (p.sumberDana || 'Kas Fisik') === 'Kas Fisik').reduce((sum, p) => sum + p.nominal, 0);
-                currentVal = modalAwal + totalJual - belanjaKas;
+                currentVal = modalAwal + totalJualKas - belanjaKas;
             }
 
             input.value = currentVal > 0 ? formatRp(currentVal) : '';
@@ -1381,6 +1430,7 @@
                 if (!item) return;
 
                 titleEl.innerHTML = '<i class="fa-solid fa-pen-to-square text-indigo-600"></i> Edit Penjualan';
+                const dest = item.destinasiDana || "Kas Fisik";
 
                 container.innerHTML = `
                     <div>
@@ -1390,6 +1440,14 @@
                     <div>
                         <label class="block mb-1">Nama Menu</label>
                         <input type="text" id="modalEditMenu" value="${item.menu}" class="w-full border p-2 rounded-lg font-bold text-slate-800">
+                    </div>
+                    <div>
+                        <label class="block mb-1">Masuk Ke</label>
+                        <select id="modalEditDest" class="w-full border p-2 rounded-lg bg-white font-bold text-indigo-800">
+                            <option value="Kas Fisik" ${dest === 'Kas Fisik' ? 'selected' : ''}>Tunai / Kas Fisik</option>
+                            <option value="BCA" ${dest === 'BCA' ? 'selected' : ''}>Rekening BCA</option>
+                            <option value="ShopeePay" ${dest === 'ShopeePay' ? 'selected' : ''}>ShopeePay / Spay</option>
+                        </select>
                     </div>
                     <div>
                         <label class="block mb-1">Harga Satuan (Rp)</label>
@@ -1460,6 +1518,7 @@
 
             if (type === 'penjualan') {
                 const menu = document.getElementById("modalEditMenu").value.trim();
+                const destinasiDana = document.getElementById("modalEditDest").value;
                 const unitPrice = parseRupiahInput(document.getElementById("modalEditUnitPrice"));
                 const qty = parseInt(document.getElementById("modalEditQty").value) || 1;
 
@@ -1470,11 +1529,27 @@
 
                 const index = transaksiList.findIndex(t => t.id === id);
                 if (index !== -1) {
+                    const oldDest = transaksiList[index].destinasiDana || "Kas Fisik";
+                    const oldSubtotal = transaksiList[index].subtotal || 0;
+                    
+                    // Kembalikan saldo lama
+                    if (oldDest === "BCA") saldoBCA = Math.max(0, saldoBCA - oldSubtotal);
+                    else if (oldDest === "ShopeePay") saldoShopeepay = Math.max(0, saldoShopeepay - oldSubtotal);
+
+                    const newSubtotal = unitPrice * qty;
+                    // Tambah saldo baru jika non-kas fisik
+                    if (destinasiDana === "BCA") saldoBCA += newSubtotal;
+                    else if (destinasiDana === "ShopeePay") saldoShopeepay += newSubtotal;
+
+                    localStorage.setItem("dagangan_saldo_bca", saldoBCA);
+                    localStorage.setItem("dagangan_saldo_shopeepay", saldoShopeepay);
+
                     transaksiList[index].tanggal = newDate;
                     transaksiList[index].menu = menu;
+                    transaksiList[index].destinasiDana = destinasiDana;
                     transaksiList[index].unitPrice = unitPrice;
                     transaksiList[index].qty = qty;
-                    transaksiList[index].subtotal = unitPrice * qty;
+                    transaksiList[index].subtotal = newSubtotal;
 
                     localStorage.setItem("dagangan_transaksi", JSON.stringify(transaksiList));
                     showCenterToast("Perubahan penjualan disimpan!");
@@ -1628,6 +1703,10 @@
             itemsContainer.innerHTML = "";
             let grandTotal = 0;
 
+            let destinasiPemasukan = "Kas Fisik";
+            if (paymentMethod.includes("BCA")) destinasiPemasukan = "BCA";
+            else if (paymentMethod.includes("ShopeePay") || paymentMethod.includes("QRIS")) destinasiPemasukan = "ShopeePay";
+
             invoiceTempItems.forEach(item => {
                 grandTotal += item.subtotal;
                 const row = document.createElement("div");
@@ -1639,12 +1718,21 @@
                 itemsContainer.appendChild(row);
 
                 if (isAutoSave) {
+                    if (destinasiPemasukan === "BCA") {
+                        saldoBCA += item.subtotal;
+                        localStorage.setItem("dagangan_saldo_bca", saldoBCA);
+                    } else if (destinasiPemasukan === "ShopeePay") {
+                        saldoShopeepay += item.subtotal;
+                        localStorage.setItem("dagangan_saldo_shopeepay", saldoShopeepay);
+                    }
+
                     const dataTransaksi = {
                         type: "penjualan",
                         id: Date.now() + Math.random(),
                         timestamp: new Date().toISOString(),
                         tanggal: activeDate,
                         menu: item.menu,
+                        destinasiDana: destinasiPemasukan,
                         unitPrice: item.unitPrice,
                         qty: item.qty,
                         subtotal: item.subtotal,
@@ -1689,6 +1777,7 @@
 
             const tglDipilih = document.getElementById("salesDateInput").value;
             const selectedMenu = document.getElementById("itemSelect").value;
+            const destinasiDana = document.getElementById("salesDestInput").value;
             let namaMenu = selectedMenu;
 
             if (selectedMenu === "CUSTOM_MENU") {
@@ -1702,6 +1791,7 @@
 
             const unitPrice = parseRupiahInput(document.getElementById("displayUnitPrice"));
             const qty = parseInt(document.getElementById("qtyInput").value);
+            const subtotal = unitPrice * qty;
 
             if (unitPrice <= 0) {
                 showCenterToast("Masukkan harga satuan yang valid!", "error");
@@ -1713,15 +1803,25 @@
                 return;
             }
 
+            // Jika pemasukan langsung ke Rek BCA atau ShopeePay, tambahkan saldonya
+            if (destinasiDana === "BCA") {
+                saldoBCA += subtotal;
+                localStorage.setItem("dagangan_saldo_bca", saldoBCA);
+            } else if (destinasiDana === "ShopeePay") {
+                saldoShopeepay += subtotal;
+                localStorage.setItem("dagangan_saldo_shopeepay", saldoShopeepay);
+            }
+
             const dataTransaksi = {
                 type: "penjualan",
                 id: Date.now(),
                 timestamp: new Date().toISOString(),
                 tanggal: tglDipilih,
                 menu: namaMenu,
+                destinasiDana: destinasiDana,
                 unitPrice: unitPrice,
                 qty: qty,
-                subtotal: unitPrice * qty
+                subtotal: subtotal
             };
 
             transaksiList.push(dataTransaksi);
@@ -1743,7 +1843,7 @@
             document.getElementById("qtyInput").value = 1;
             kalkulasiLiveTotal();
             renderSemuaTabel();
-            showCenterToast("Penjualan dicatat!");
+            showCenterToast(`Penjualan dicatat (Masuk ke ${destinasiDana})!`);
         }
 
         function handleTambahPengeluaran(e) {
@@ -1811,11 +1911,16 @@
             let totalPenjualan = 0;
 
             if (filteredTransaksi.length === 0) {
-                tbodyJual.innerHTML = `<tr><td colspan="7" class="text-center py-5 text-slate-400 italic">Belum ada penjualan.</td></tr>`;
+                tbodyJual.innerHTML = `<tr><td colspan="8" class="text-center py-5 text-slate-400 italic">Belum ada penjualan.</td></tr>`;
             } else {
                 filteredTransaksi.forEach((item, index) => {
                     totalQty += item.qty;
                     totalPenjualan += item.subtotal;
+                    const dest = item.destinasiDana || "Kas Fisik";
+
+                    let badgeDestClass = "bg-emerald-50 text-emerald-700 border-emerald-200";
+                    if (dest === "BCA") badgeDestClass = "bg-blue-50 text-blue-700 border-blue-200";
+                    else if (dest === "ShopeePay") badgeDestClass = "bg-amber-50 text-amber-700 border-amber-200";
 
                     const tr = document.createElement("tr");
                     tr.className = "hover:bg-slate-50/70 border-b";
@@ -1823,6 +1928,7 @@
                         <td class="py-2 px-3 text-center text-slate-400">${index + 1}</td>
                         <td class="py-2 px-3 font-semibold text-slate-700">${formatTanggalLengkapIndo(item.tanggal)}</td>
                         <td class="py-2 px-3 font-bold text-slate-800">${item.menu}</td>
+                        <td class="py-2 px-3 text-center text-xs"><span class="px-2 py-0.5 rounded-full font-bold border ${badgeDestClass}">${dest}</span></td>
                         <td class="py-2 px-3 text-center">${formatRp(item.unitPrice || item.basePrice || item.pricePerItem)}</td>
                         <td class="py-2 px-3 text-center font-bold bg-slate-50/50">${item.qty}</td>
                         <td class="py-2 px-3 text-right font-bold text-slate-800">${formatRp(item.subtotal)}</td>
@@ -1893,7 +1999,8 @@
             let saldoKasFisikReal = manualKasFisikMap[activeDate];
             const statusKasLabel = document.getElementById("labelKasFisikStatus");
             if (saldoKasFisikReal === undefined) {
-                saldoKasFisikReal = modalAwalHariIni + totalPenjualan - belanjaKasFisik;
+                let totalJualKas = filteredTransaksi.filter(t => (t.destinasiDana || 'Kas Fisik') === 'Kas Fisik').reduce((sum, t) => sum + t.subtotal, 0);
+                saldoKasFisikReal = modalAwalHariIni + totalJualKas - belanjaKasFisik;
                 statusKasLabel.textContent = "Uang di tas/laci";
             } else {
                 statusKasLabel.textContent = "Manual (Admin)";
@@ -1921,10 +2028,22 @@
 
         function hapusPenjualan(id) {
             showConfirmModal("Hapus Penjualan", "Apakah Anda yakin ingin menghapus baris penjualan ini?", () => {
+                const item = transaksiList.find(t => t.id === id);
+                if (item) {
+                    const dest = item.destinasiDana || "Kas Fisik";
+                    const sub = item.subtotal || 0;
+                    if (dest === "BCA") {
+                        saldoBCA = Math.max(0, saldoBCA - sub);
+                        localStorage.setItem("dagangan_saldo_bca", saldoBCA);
+                    } else if (dest === "ShopeePay") {
+                        saldoShopeepay = Math.max(0, saldoShopeepay - sub);
+                        localStorage.setItem("dagangan_saldo_shopeepay", saldoShopeepay);
+                    }
+                }
                 transaksiList = transaksiList.filter(t => t.id !== id);
                 localStorage.setItem("dagangan_transaksi", JSON.stringify(transaksiList));
                 renderSemuaTabel();
-                showCenterToast("Penjualan dihapus");
+                showCenterToast("Penjualan dihapus & saldo disesuaikan");
             });
         }
 
@@ -2097,7 +2216,8 @@
 
             let sisaKasFisikReal = manualKasFisikMap[activeDate];
             if (sisaKasFisikReal === undefined) {
-                sisaKasFisikReal = modalAwalHariIni + totalPenjualan - belanjaKasFisik;
+                let totalJualKas = filteredTransaksi.filter(t => (t.destinasiDana || 'Kas Fisik') === 'Kas Fisik').reduce((sum, t) => sum + t.subtotal, 0);
+                sisaKasFisikReal = modalAwalHariIni + totalJualKas - belanjaKasFisik;
             }
             const totalSemuaSaldo = sisaKasFisikReal + saldoBCA + saldoShopeepay;
 
@@ -2114,11 +2234,12 @@
             csv += `Total Saldo (Kas Fisik + BCA + Spay),${totalSemuaSaldo}\n\n`;
 
             csv += "=== RINCIAN REKAPITULASI PENJUALAN ===\n";
-            csv += "No,Tanggal Penjualan,Menu Dagangan,Harga Satuan,Qty,Subtotal\n";
+            csv += "No,Tanggal Penjualan,Menu Dagangan,Destinasi Dana,Harga Satuan,Qty,Subtotal\n";
             filteredTransaksi.forEach((item, index) => {
                 const tgl = formatTanggalLengkapIndo(item.tanggal);
+                const dest = item.destinasiDana || "Kas Fisik";
                 const harga = item.unitPrice || item.basePrice || item.pricePerItem;
-                csv += `${index + 1},"${tgl}","${item.menu}",${harga},${item.qty},${item.subtotal}\n`;
+                csv += `${index + 1},"${tgl}","${item.menu}","${dest}",${harga},${item.qty},${item.subtotal}\n`;
             });
 
             csv += "\n=== RINCIAN CATATAN PEMBELANJAAN ===\n";
@@ -2142,7 +2263,7 @@
         // ==================== LOGIKA ADMIN & AUTENTIKASI ====================
         function handleAuthAction() {
             if (isAdminLoggedIn) {
-                logoutAdmin();
+                bukaPanelAdmin();
             } else {
                 toggleAdminModal();
             }
@@ -2165,6 +2286,30 @@
                     pinInput.focus();
                 }, 100);
             }
+        }
+
+        function bukaPanelAdmin() {
+            const modal = document.getElementById("adminPanelModal");
+            modal.classList.remove("hidden");
+            modal.classList.add("flex");
+        }
+
+        function closeAdminPanelModal() {
+            const modal = document.getElementById("adminPanelModal");
+            modal.classList.add("hidden");
+            modal.classList.remove("flex");
+        }
+
+        function bukaPanelAdminLangsung() {
+            if (isAdminLoggedIn) {
+                bukaPanelAdmin();
+            } else {
+                toggleAdminModal();
+            }
+        }
+
+        function bukaMasterSheet() {
+            window.open(MASTER_SHEET_URL, '_blank');
         }
 
         function bukaEditorHargaLangsung() {
@@ -2201,6 +2346,7 @@
                 updateRoleUI(true);
                 renderSemuaTabel();
                 showCenterToast("Login Admin Berhasil!");
+                bukaPanelAdmin();
             } else {
                 document.getElementById("authErrorMsg").classList.remove("hidden");
             }
@@ -2242,20 +2388,20 @@
             const badge = document.getElementById("roleBadge");
             const notice = document.getElementById("adminNotice");
             const authBtn = document.getElementById("authBtn");
-            const btnUbahHarga = document.getElementById("btnHeaderUbahHarga");
+            const btnAdminPanel = document.getElementById("btnHeaderAdminPanel");
 
             if (isAdmin) {
                 badge.className = "bg-amber-500 text-white text-[11px] sm:text-xs px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full font-semibold uppercase tracking-wider flex items-center gap-1 shadow-sm";
                 badge.innerHTML = '<i class="fa-solid fa-shield-halved text-[10px]"></i> Admin';
                 notice.classList.remove("hidden");
-                btnUbahHarga.classList.remove("hidden");
-                authBtn.className = "bg-rose-700 hover:bg-rose-800 text-[11px] sm:text-xs px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-lg transition font-medium border border-rose-500 flex items-center gap-1 shadow-sm text-white";
-                authBtn.innerHTML = '<i class="fa-solid fa-right-from-bracket text-[10px]"></i> <span>Logout</span>';
+                btnAdminPanel.classList.remove("hidden");
+                authBtn.className = "bg-indigo-600 hover:bg-indigo-700 text-[11px] sm:text-xs px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-lg transition font-medium border border-indigo-400 flex items-center gap-1 shadow-sm text-white";
+                authBtn.innerHTML = '<i class="fa-solid fa-gear text-[10px]"></i> <span>Menu Admin</span>';
             } else {
                 badge.className = "bg-emerald-500 text-white text-[11px] sm:text-xs px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full font-semibold uppercase tracking-wider flex items-center gap-1 shadow-sm";
                 badge.innerHTML = '<i class="fa-solid fa-user text-[10px]"></i> User';
                 notice.classList.add("hidden");
-                btnUbahHarga.classList.add("hidden");
+                btnAdminPanel.classList.add("hidden");
                 authBtn.className = "bg-indigo-900 hover:bg-indigo-950 text-[11px] sm:text-xs px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-lg transition font-medium border border-indigo-500 flex items-center gap-1 shadow-sm text-white";
                 authBtn.innerHTML = '<i class="fa-solid fa-lock text-[10px]"></i> <span>Login</span>';
             }
