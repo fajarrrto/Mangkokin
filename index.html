@@ -670,6 +670,15 @@
             <!-- Body Modal: Scrollable Area -->
             <div class="p-5 pt-1 overflow-y-auto space-y-4">
                 
+                <!-- HEADER BRANDING INVOICE MANGKOKIN (LOGO & ALAMAT SESUAI REQUEST) -->
+                <div class="text-center pt-1 pb-3 border-b border-dashed border-slate-200">
+                    <img src="logo_mangkokin.png" onerror="this.onerror=null; this.src='WhatsApp Image 2026-10-12 at 09.54.25.jpeg';" alt="Logo Mangkokin" class="w-14 h-14 mx-auto rounded-full object-cover mb-1.5 border-2 border-amber-300 shadow-sm bg-amber-50">
+                    <h2 class="text-base sm:text-lg font-black tracking-widest text-slate-900 font-sans uppercase">MANGKOKIN</h2>
+                    <p class="text-[11px] text-slate-500 font-sans leading-tight mt-0.5 max-w-xs mx-auto">
+                        Perumahan Bumi Indah Pesona, Blok A12 No 1, Kalisuren, Tajurhalang, Bojonggede, Bogor.
+                    </p>
+                </div>
+
                 <!-- KARTU INFORMASI UTAMA (Container Abu-abu Lembut Sesuai Gambar) -->
                 <div class="bg-slate-50/90 rounded-2xl p-4 border border-slate-100 space-y-2 text-xs sm:text-sm font-sans">
                     <div class="flex justify-between items-center">
@@ -1010,8 +1019,9 @@
     <!-- ============================================================== -->
     <div id="printableThermalArea" class="hidden font-mono text-[11px] leading-relaxed text-black">
         <div class="text-center border-b border-dashed border-black pb-2 mb-2">
+            <img src="logo_mangkokin.png" onerror="this.onerror=null; this.src='WhatsApp Image 2026-10-12 at 09.54.25.jpeg';" alt="Logo Mangkokin" class="w-12 h-12 mx-auto rounded-full object-cover mb-1 border border-black">
             <h2 class="text-base font-black tracking-widest font-sans">MANGKOKIN</h2>
-            <p class="text-[9px] leading-tight mt-0.5">
+            <p class="text-[9px] leading-tight mt-0.5 max-w-[240px] mx-auto">
                 Perumahan Bumi Indah Pesona, Blok A12 No 1, Kalisuren, Tajurhalang, Bojonggede, Bogor.
             </p>
             <p class="text-[9px] font-bold mt-1" id="prnNoStruk">TX1792883046499</p>
@@ -1551,7 +1561,10 @@
         function bagikanKeWhatsApp() {
             if (!activeDetailTx) return;
 
-            let text = `*NOTA PEMBELIAN MANGKOKIN*\n`;
+            let text = `*MANGKOKIN*\n`;
+            text += `_Perumahan Bumi Indah Pesona, Blok A12 No 1, Kalisuren, Tajurhalang, Bojonggede, Bogor._\n`;
+            text += `--------------------------------\n`;
+            text += `*NOTA PEMBELIAN / INVOICE*\n`;
             text += `No. Struk: ${activeDetailTx.noStruk || `TX${activeDetailTx.id}`}\n`;
             text += `Tanggal: ${formatTanggalDetailGambar(activeDetailTx.tanggal, activeDetailTx.jam)}\n`;
             text += `Pelanggan: ${activeDetailTx.pelanggan || "Pelanggan Umum"}\n`;
