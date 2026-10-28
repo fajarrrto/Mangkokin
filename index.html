@@ -255,11 +255,13 @@
                 <span class="text-[10px] text-slate-400 mt-1">Pengeluaran modal</span>
             </div>
 
-            <!-- Sisa Kas Fisik (Tunai Laci) -->
+            <!-- Sisa Uang Fisik (Tunai Laci) -->
             <div class="bg-gradient-to-br from-indigo-50 to-indigo-100/60 p-3.5 rounded-2xl border-2 border-indigo-200 shadow-sm flex flex-col justify-between hover:shadow-md transition">
                 <div class="flex items-center justify-between">
-                    <span class="text-[11px] font-extrabold text-indigo-900">Sisa Kas Fisik</span>
-                    <i class="fa-solid fa-cash-register text-indigo-600 text-xs"></i>
+                    <span class="text-[11px] font-extrabold text-indigo-900">Sisa Uang Fisik</span>
+                    <button onclick="checkAdminThenExecute(() => editSaldoBankDialog('KasFisik'))" title="Update Sisa Uang Fisik" class="text-indigo-600 hover:text-indigo-800 text-xs p-1">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                    </button>
                 </div>
                 <h3 id="statSaldoKas" class="text-base sm:text-lg font-black text-indigo-700 mt-2">Rp 0</h3>
                 <span class="text-[10px] text-indigo-500 font-medium mt-1">Uang laci/tunai</span>
@@ -300,6 +302,9 @@
             </button>
             <button onclick="bukaTab('tabRiwayat')" id="navBtnRiwayat" class="flex-1 py-2.5 px-3 rounded-xl font-semibold text-xs sm:text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition flex items-center justify-center gap-2">
                 <i class="fa-solid fa-receipt"></i> <span>Riwayat Transaksi</span>
+            </button>
+            <button onclick="bukaTab('tabRiwayatInvoice')" id="navBtnRiwayatInvoice" class="flex-1 py-2.5 px-3 rounded-xl font-semibold text-xs sm:text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition flex items-center justify-center gap-2">
+                <i class="fa-solid fa-file-invoice-dollar"></i> <span>Riwayat Invoice</span>
             </button>
             <button onclick="bukaTab('tabMenu')" id="navBtnMenu" class="flex-1 py-2.5 px-3 rounded-xl font-semibold text-xs sm:text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition flex items-center justify-center gap-2">
                 <i class="fa-solid fa-utensils"></i> <span>Daftar Menu</span>
@@ -426,6 +431,24 @@
                             </tfoot>
                         </table>
                     </div>
+                </div>
+
+                <!-- Opsi Masukkan ke Riwayat Transaksi -->
+                <div class="bg-indigo-50/70 border border-indigo-200/80 rounded-2xl p-3.5 mb-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <label class="flex items-start sm:items-center gap-3 cursor-pointer select-none flex-1">
+                        <input type="checkbox" id="orderIncludeInTx" checked class="w-5 h-5 mt-0.5 sm:mt-0 text-indigo-600 rounded-lg border-slate-300 focus:ring-indigo-500 cursor-pointer accent-indigo-600">
+                        <div>
+                            <span class="block text-xs sm:text-sm font-bold text-slate-800 flex items-center gap-1.5">
+                                <i class="fa-solid fa-receipt text-indigo-600"></i> Masukkan ke Riwayat Transaksi
+                            </span>
+                            <span class="block text-[11px] text-slate-500 mt-0.5">
+                                Jika dicentang, pesanan dicatat di <b>Riwayat Transaksi</b> & dihitung ke arus kas. Jika tidak dicentang, hanya tersimpan di <b>Riwayat Invoice</b>.
+                            </span>
+                        </div>
+                    </label>
+                    <span class="self-start sm:self-auto text-[10px] font-bold px-2.5 py-1 rounded-full bg-white text-indigo-700 border border-indigo-200 shadow-sm shrink-0">
+                        <i class="fa-solid fa-file-invoice-dollar text-indigo-600 mr-1"></i> Otomatis Masuk Riwayat Invoice
+                    </span>
                 </div>
 
                 <!-- Tombol Aksi Penyelesaian Transaksi -->
@@ -648,6 +671,77 @@
             </div>
         </div>
 
+        <!-- ============================================================== -->
+        <!-- TAB: RIWAYAT INVOICE (TRACKING LENGKAP SEMUA INVOICE)           -->
+        <!-- ============================================================== -->
+        <div id="tabRiwayatInvoice" class="tab-content hidden space-y-4">
+            
+            <!-- Filter & Search Toolbar Riwayat Invoice -->
+            <div class="bg-white rounded-3xl shadow-sm border border-slate-200/80 p-5 no-print">
+                <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-file-invoice-dollar text-indigo-600 text-xl"></i>
+                        <div>
+                            <h2 class="text-lg font-black text-slate-900 tracking-tight">Riwayat Invoice</h2>
+                            <p class="text-xs text-slate-500">Tracking seluruh riwayat invoice, baik yang masuk riwayat transaksi maupun invoice non-transaksi</p>
+                        </div>
+                    </div>
+
+                    <!-- Tombol Export CSV Invoice -->
+                    <div class="flex items-center space-x-2">
+                        <button onclick="exportInvoiceToCSV()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs px-3.5 py-2 rounded-xl font-bold border border-slate-300 transition flex items-center gap-1.5 shadow-sm">
+                            <i class="fa-solid fa-file-excel text-emerald-600"></i> Unduh CSV Invoice
+                        </button>
+                    </div>
+                </div>
+
+                <!-- SEARCH BAR INVOICE -->
+                <div class="relative mb-4">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-slate-400">
+                        <i class="fa-solid fa-magnifying-glass text-sm"></i>
+                    </span>
+                    <input type="text" id="invSearchInput" oninput="renderRiwayatInvoice()" placeholder="Cari no. invoice, no. struk, pelanggan, atau nama produk..." class="w-full bg-slate-50 border border-slate-300 rounded-2xl pl-11 pr-4 py-3 text-xs sm:text-sm font-semibold text-slate-800 focus:ring-2 focus:ring-indigo-500 focus:bg-white focus:outline-none transition shadow-sm">
+                </div>
+
+                <!-- FILTER CHIPS & STATUS TRANSAKSI -->
+                <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-slate-100">
+                    
+                    <!-- Filter Status Bayar -->
+                    <div class="flex flex-wrap items-center gap-1.5">
+                        <span class="text-xs font-bold text-slate-500 mr-1">Status Bayar:</span>
+                        <button onclick="setFilterInvStatus('semua')" id="invChipStatusSemua" class="text-xs px-3 py-1.5 rounded-full font-bold transition bg-indigo-600 text-white shadow-sm">
+                            Semua
+                        </button>
+                        <button onclick="setFilterInvStatus('lunas')" id="invChipStatusLunas" class="text-xs px-3 py-1.5 rounded-full font-semibold transition bg-slate-100 text-slate-600 hover:bg-slate-200">
+                            🟢 Lunas
+                        </button>
+                        <button onclick="setFilterInvStatus('belum_dibayar')" id="invChipStatusBelum" class="text-xs px-3 py-1.5 rounded-full font-semibold transition bg-slate-100 text-slate-600 hover:bg-slate-200">
+                            🟡 Bill Belum Dibayar
+                        </button>
+                    </div>
+
+                    <!-- Filter Kategori Catatan (Masuk Transaksi vs Hanya Invoice) -->
+                    <div class="flex flex-wrap items-center gap-1.5">
+                        <span class="text-xs font-bold text-slate-500 mr-1">Kategori:</span>
+                        <button onclick="setFilterInvTx('semua')" id="invChipTxSemua" class="text-xs px-3 py-1.5 rounded-full font-bold transition bg-indigo-600 text-white shadow-sm">
+                            Semua Invoice
+                        </button>
+                        <button onclick="setFilterInvTx('masuk')" id="invChipTxMasuk" class="text-xs px-3 py-1.5 rounded-full font-semibold transition bg-slate-100 text-slate-600 hover:bg-slate-200">
+                            ✅ Masuk Transaksi
+                        </button>
+                        <button onclick="setFilterInvTx('hanya_invoice')" id="invChipTxHanya" class="text-xs px-3 py-1.5 rounded-full font-semibold transition bg-slate-100 text-slate-600 hover:bg-slate-200">
+                            📄 Hanya Invoice
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DAFTAR INVOICE INTERAKTIF -->
+            <div id="invListContainer" class="space-y-3 no-print">
+                <!-- Diisi via renderRiwayatInvoice() -->
+            </div>
+        </div>
+
         <!-- ========================================== -->
         <!-- TAB 4: MANAJEMEN MENU & DAFTAR PRODUK      -->
         <!-- ========================================== -->
@@ -703,6 +797,11 @@
                 <!-- KARTU INFORMASI UTAMA (Container Abu-abu Lembut Sesuai Gambar) -->
                 <div class="bg-slate-50/90 rounded-2xl p-4 border border-slate-100 space-y-2 text-xs sm:text-sm font-sans">
                     <div class="flex justify-between items-center">
+                        <span class="text-slate-500 font-medium">No. Invoice</span>
+                        <span id="dtNoInvoice" class="font-bold text-indigo-700 font-mono tracking-wide text-right">INV-000000</span>
+                    </div>
+
+                    <div class="flex justify-between items-center">
                         <span class="text-slate-500 font-medium">No. Struk</span>
                         <span id="dtNoStruk" class="font-bold text-slate-800 font-mono tracking-wide text-right">TX1792883046499</span>
                     </div>
@@ -723,6 +822,11 @@
                             <i class="fa-solid fa-user text-blue-500 text-xs"></i>
                             <span id="dtPelanggan">Mama Raffasya</span>
                         </div>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-1.5 border-t border-slate-200/60">
+                        <span class="text-slate-500 font-medium">Riwayat Transaksi</span>
+                        <span id="dtMasukTransaksiBadge" class="text-[10px] font-bold px-2 py-0.5 rounded-full"></span>
                     </div>
                 </div>
 
@@ -763,26 +867,33 @@
             </div>
 
             <!-- FOOTER MODAL: TOMBOL AKSI LENGKAP (Disembunyikan saat cetak) -->
-            <div class="p-4 border-t border-slate-100 bg-slate-50 flex flex-wrap gap-2 sticky bottom-0 no-print">
-                <!-- Tombol Ubah Status Lunas / Belum -->
-                <button id="dtBtnToggleStatus" onclick="toggleStatusDetailModal()" class="flex-1 py-2.5 px-3 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-600 text-white transition flex items-center justify-center gap-1.5 shadow-sm">
-                    <i class="fa-solid fa-circle-check"></i> <span id="dtBtnToggleText">Tandai Lunas</span>
+            <div class="p-4 border-t border-slate-100 bg-slate-50 space-y-2 sticky bottom-0 no-print">
+                <!-- Tombol Masuk/Keluarkan dari Riwayat Transaksi -->
+                <button id="dtBtnToggleTransaksi" onclick="toggleMasukTransaksiModal()" class="w-full py-2 px-3 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 border">
+                    <span id="dtBtnToggleTransaksiText">Masukkan ke Riwayat Transaksi</span>
                 </button>
 
-                <!-- Tombol Cetak Struk Kasir Thermal -->
-                <button onclick="cetakStrukDariModalDetail()" class="flex-1 py-2.5 px-3 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white transition flex items-center justify-center gap-1.5 shadow-sm">
-                    <i class="fa-solid fa-print"></i> <span>Cetak Struk</span>
-                </button>
+                <div class="flex flex-wrap gap-2">
+                    <!-- Tombol Ubah Status Lunas / Belum -->
+                    <button id="dtBtnToggleStatus" onclick="toggleStatusDetailModal()" class="flex-1 py-2.5 px-3 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-600 text-white transition flex items-center justify-center gap-1.5 shadow-sm">
+                        <i class="fa-solid fa-circle-check"></i> <span id="dtBtnToggleText">Tandai Lunas</span>
+                    </button>
 
-                <!-- Tombol Kirim WhatsApp -->
-                <button onclick="bagikanKeWhatsApp()" class="py-2.5 px-3.5 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white transition flex items-center justify-center gap-1.5 shadow-sm" title="Kirim Nota ke WhatsApp">
-                    <i class="fa-brands fa-whatsapp text-sm"></i>
-                </button>
+                    <!-- Tombol Cetak Struk Kasir Thermal -->
+                    <button onclick="cetakStrukDariModalDetail()" class="flex-1 py-2.5 px-3 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white transition flex items-center justify-center gap-1.5 shadow-sm">
+                        <i class="fa-solid fa-print"></i> <span>Cetak Struk</span>
+                    </button>
 
-                <!-- Tombol Hapus Transaksi Ini -->
-                <button onclick="hapusTransaksiDariDetailModal()" class="py-2.5 px-3 rounded-xl text-xs font-bold bg-rose-50 hover:bg-rose-100 text-rose-600 transition flex items-center justify-center" title="Hapus Transaksi">
-                    <i class="fa-solid fa-trash-can"></i>
-                </button>
+                    <!-- Tombol Kirim WhatsApp -->
+                    <button onclick="bagikanKeWhatsApp()" class="py-2.5 px-3.5 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white transition flex items-center justify-center gap-1.5 shadow-sm" title="Kirim Nota ke WhatsApp">
+                        <i class="fa-brands fa-whatsapp text-sm"></i>
+                    </button>
+
+                    <!-- Tombol Hapus Transaksi Ini -->
+                    <button onclick="hapusTransaksiDariDetailModal()" class="py-2.5 px-3 rounded-xl text-xs font-bold bg-rose-50 hover:bg-rose-100 text-rose-600 transition flex items-center justify-center" title="Hapus Transaksi">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -929,24 +1040,28 @@
     </div>
 
     <!-- ========================================== -->
-    <!-- MODAL UPDATE SALDO BANK / SHOPEEPAY        -->
+    <!-- MODAL UPDATE SALDO BANK / SHOPEEPAY / KAS  -->
     <!-- ========================================== -->
     <div id="bankDialog" class="fixed inset-0 z-[75] bg-slate-950/60 backdrop-blur-sm hidden items-center justify-center p-4">
         <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl animate-pop border border-slate-100">
             <h3 id="bankDialogTitle" class="text-base font-bold text-slate-800 mb-1 flex items-center gap-2">
                 <i class="fa-solid fa-building-columns text-blue-600"></i> Update Saldo Rekening
             </h3>
-            <p class="text-xs text-slate-500 mb-4">Perbarui saldo rekening atau e-wallet:</p>
+            <p id="bankDialogSubtitle" class="text-xs text-slate-500 mb-4">Perbarui saldo rekening atau uang fisik:</p>
             
             <input type="hidden" id="bankTargetType">
-            <div class="mb-5">
+            <div class="mb-4">
                 <label id="bankLabel" class="block text-xs font-bold text-slate-700 mb-1">Saldo Saat Ini</label>
                 <input type="text" id="bankInputNominal" placeholder="Rp 0" oninput="formatRupiahInput(this)" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 font-extrabold text-slate-800 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-right">
             </div>
 
+            <button type="button" id="bankAutoCalcBtn" onclick="setSaldoKasFromCalculation()" class="hidden w-full mb-4 py-2 px-3 rounded-xl text-[11px] font-bold bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200 transition text-center">
+                <i class="fa-solid fa-calculator mr-1"></i> Gunakan Nilai Hitungan Otomatis
+            </button>
+
             <div class="flex space-x-2">
                 <button onclick="closeSaldoBankDialog()" class="flex-1 py-2.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">Batal</button>
-                <button onclick="simpanSaldoBank()" class="flex-1 py-2.5 rounded-xl text-xs font-bold bg-blue-600 text-white hover:bg-blue-700 transition shadow-md shadow-blue-200">Simpan Saldo</button>
+                <button onclick="simpanSaldoBank()" id="btnSaveBank" class="flex-1 py-2.5 rounded-xl text-xs font-bold bg-blue-600 text-white hover:bg-blue-700 transition shadow-md shadow-blue-200">Simpan Saldo</button>
             </div>
         </div>
     </div>
@@ -1120,6 +1235,7 @@
         // State Data Lokal
         let menuList = JSON.parse(localStorage.getItem("dagangan_menus")) || DEFAULT_MENUS;
         let modalAwalMap = JSON.parse(localStorage.getItem("dagangan_modal_harian_map")) || {};
+        let saldoKasFisik = localStorage.getItem("dagangan_saldo_kas") !== null ? parseInt(localStorage.getItem("dagangan_saldo_kas")) : null;
         let saldoBCA = parseInt(localStorage.getItem("dagangan_saldo_bca")) || 0;
         let saldoShopeepay = parseInt(localStorage.getItem("dagangan_saldo_shopeepay")) || 0;
 
@@ -1129,14 +1245,34 @@
         // Normalisasi transaksi lama agar kompatibel dengan format baru multi-item & no struk
         let transaksiList = rawTransaksiList.map(t => normalizeTransaksi(t));
 
+        // State Riwayat Invoice
+        let rawInvoiceList = JSON.parse(localStorage.getItem("dagangan_invoices"));
+        let invoiceList = [];
+        if (rawInvoiceList && Array.isArray(rawInvoiceList)) {
+            invoiceList = rawInvoiceList.map(t => normalizeTransaksi(t));
+        } else {
+            invoiceList = transaksiList.map(t => ({
+                ...t,
+                noInvoice: t.noInvoice || `INV-${String(t.id || Date.now()).slice(-6)}`,
+                masukRiwayatTransaksi: true
+            }));
+            if (invoiceList.length > 0) {
+                localStorage.setItem("dagangan_invoices", JSON.stringify(invoiceList));
+            }
+        }
+
         // Keranjang Pesanan (Cart Kasir Sementara)
         let orderCart = [];
 
         // Detail Transaksi Aktif yang sedang dibuka di modal
         let activeDetailTx = null;
 
-        // Status Filter Aktif di Riwayat
+        // Status Filter Aktif di Riwayat Transaksi
         let activeStatusFilter = "semua";
+
+        // Status Filter Aktif di Riwayat Invoice
+        let activeInvStatusFilter = "semua";
+        let activeInvTxFilter = "semua";
 
         const NAMA_HARI = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
         const NAMA_BULAN = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
@@ -1215,8 +1351,15 @@
         // NORMALISASI TRANSAKSI (MULTI-ITEM & LEGACY)
         // ==========================================
         function normalizeTransaksi(t) {
+            const noInvoice = t.noInvoice || `INV-${String(t.id || Date.now()).slice(-6)}`;
+            const masukTx = t.masukRiwayatTransaksi !== undefined ? t.masukRiwayatTransaksi : true;
+
             if (t.items && Array.isArray(t.items)) {
-                return t;
+                return {
+                    ...t,
+                    noInvoice: noInvoice,
+                    masukRiwayatTransaksi: masukTx
+                };
             }
             const dateStr = t.tanggal || getActiveDate();
             const timeStr = t.jam || "06:00";
@@ -1227,6 +1370,7 @@
             return {
                 id: t.id || Date.now(),
                 noStruk: t.noStruk || `TX${String(t.id || Date.now()).slice(-13)}`,
+                noInvoice: noInvoice,
                 tanggal: dateStr,
                 jam: timeStr,
                 pelanggan: t.pelanggan || t.customer || "Pelanggan Umum",
@@ -1241,7 +1385,8 @@
                     }
                 ],
                 subtotal: subtotal,
-                total: subtotal
+                total: t.total || subtotal,
+                masukRiwayatTransaksi: masukTx
             };
         }
 
@@ -1258,20 +1403,25 @@
                 'tabKasir': 'navBtnKasir',
                 'tabBelanja': 'navBtnBelanja',
                 'tabRiwayat': 'navBtnRiwayat',
+                'tabRiwayatInvoice': 'navBtnRiwayatInvoice',
                 'tabMenu': 'navBtnMenu'
             };
 
             Object.entries(navMap).forEach(([tId, btnId]) => {
                 const btn = document.getElementById(btnId);
-                if (tId === tabId) {
-                    btn.className = "flex-1 py-2.5 px-3 rounded-xl font-bold text-xs sm:text-sm transition flex items-center justify-center gap-2 bg-indigo-600 text-white shadow";
-                } else {
-                    btn.className = "flex-1 py-2.5 px-3 rounded-xl font-semibold text-xs sm:text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition flex items-center justify-center gap-2";
+                if (btn) {
+                    if (tId === tabId) {
+                        btn.className = "flex-1 py-2.5 px-3 rounded-xl font-bold text-xs sm:text-sm transition flex items-center justify-center gap-2 bg-indigo-600 text-white shadow";
+                    } else {
+                        btn.className = "flex-1 py-2.5 px-3 rounded-xl font-semibold text-xs sm:text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition flex items-center justify-center gap-2";
+                    }
                 }
             });
 
             if (tabId === 'tabRiwayat') {
                 renderRiwayatTransaksi();
+            } else if (tabId === 'tabRiwayatInvoice') {
+                renderRiwayatInvoice();
             } else if (tabId === 'tabMenu') {
                 renderMenuCards();
             }
@@ -1412,6 +1562,7 @@
             const pelanggan = document.getElementById("orderCustomerName").value.trim() || "Pelanggan Umum";
             const pembayaran = document.getElementById("orderPaymentMethod").value;
             const status = document.getElementById("orderPaymentStatus").value;
+            const masukTransaksi = document.getElementById("orderIncludeInTx") ? document.getElementById("orderIncludeInTx").checked : true;
             const activeDate = getActiveDate();
             const activeTime = getCurrentTimeHHMM();
 
@@ -1427,10 +1578,12 @@
             });
 
             const uniqueNoStruk = `TX${Date.now()}`;
+            const uniqueNoInvoice = `INV-${Date.now().toString().slice(-6)}`;
 
             const newTx = {
                 id: Date.now(),
                 noStruk: uniqueNoStruk,
+                noInvoice: uniqueNoInvoice,
                 tanggal: activeDate,
                 jam: activeTime,
                 pelanggan: pelanggan,
@@ -1438,21 +1591,34 @@
                 status: status, // 'lunas' atau 'belum_dibayar'
                 items: items,
                 subtotal: grandTotal,
-                total: grandTotal
+                total: grandTotal,
+                masukRiwayatTransaksi: masukTransaksi
             };
 
-            transaksiList.unshift(newTx);
-            localStorage.setItem("dagangan_transaksi", JSON.stringify(transaksiList));
+            // Selalu masuk ke Riwayat Invoice
+            invoiceList.unshift(newTx);
+            localStorage.setItem("dagangan_invoices", JSON.stringify(invoiceList));
+
+            // Jika opsi ceklis aktif, masukkan juga ke Riwayat Transaksi
+            if (masukTransaksi) {
+                transaksiList.unshift(newTx);
+                localStorage.setItem("dagangan_transaksi", JSON.stringify(transaksiList));
+            }
 
             // Reset keranjang
             orderCart = [];
             renderCartTable();
             renderSemuaTabel();
+            renderRiwayatInvoice();
 
             // Auto-sync ke Cloud (Multi-Device)
             triggerAutoSync();
 
-            showCenterToast(`Transaksi ${uniqueNoStruk} berhasil dicatat!`);
+            if (masukTransaksi) {
+                showCenterToast(`Transaksi ${uniqueNoStruk} & Invoice ${uniqueNoInvoice} berhasil dicatat!`);
+            } else {
+                showCenterToast(`Invoice ${uniqueNoInvoice} dicatat ke Riwayat Invoice saja!`);
+            }
 
             // Buka Modal Detail Transaksi persis seperti gambar yang dilampirkan user!
             bukaDetailTransaksiModal(newTx);
@@ -1470,10 +1636,46 @@
         function bukaDetailTransaksiModal(tx) {
             activeDetailTx = tx;
 
-            document.getElementById("dtNoStruk").textContent = tx.noStruk || `TX${tx.id}`;
+            const noStruk = tx.noStruk || `TX${tx.id}`;
+            const noInvoice = tx.noInvoice || `INV-${String(tx.id || Date.now()).slice(-6)}`;
+
+            document.getElementById("dtNoStruk").textContent = noStruk;
+            const noInvEl = document.getElementById("dtNoInvoice");
+            if (noInvEl) noInvEl.textContent = noInvoice;
+
             document.getElementById("dtTanggal").textContent = formatTanggalDetailGambar(tx.tanggal, tx.jam);
             document.getElementById("dtPembayaran").textContent = tx.pembayaran || "-";
             document.getElementById("dtPelanggan").textContent = tx.pelanggan || "Pelanggan Umum";
+
+            // Status Riwayat Transaksi & Tombol Toggle Transaksi
+            const txBadge = document.getElementById("dtMasukTransaksiBadge");
+            const btnToggleTx = document.getElementById("dtBtnToggleTransaksi");
+            const btnToggleTxText = document.getElementById("dtBtnToggleTransaksiText");
+
+            const isInTransaksi = transaksiList.some(t => t.id === tx.id);
+            if (isInTransaksi) {
+                if (txBadge) {
+                    txBadge.className = "text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200";
+                    txBadge.innerHTML = '<i class="fa-solid fa-check mr-1"></i> Masuk Riwayat Transaksi';
+                }
+                if (btnToggleTx) {
+                    btnToggleTx.className = "w-full py-2 px-3 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 border bg-rose-50 text-rose-700 border-rose-200 hover:bg-rose-100";
+                }
+                if (btnToggleTxText) {
+                    btnToggleTxText.innerHTML = '<i class="fa-solid fa-arrow-right-from-bracket mr-1"></i> Keluarkan dari Riwayat Transaksi';
+                }
+            } else {
+                if (txBadge) {
+                    txBadge.className = "text-[10px] font-bold px-2 py-0.5 rounded-full bg-purple-100 text-purple-800 border border-purple-200";
+                    txBadge.innerHTML = '<i class="fa-regular fa-file-lines mr-1"></i> Hanya Riwayat Invoice';
+                }
+                if (btnToggleTx) {
+                    btnToggleTx.className = "w-full py-2 px-3 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 border bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100";
+                }
+                if (btnToggleTxText) {
+                    btnToggleTxText.innerHTML = '<i class="fa-solid fa-plus-circle mr-1"></i> Masukkan ke Riwayat Transaksi';
+                }
+            }
 
             // Render Item List
             const container = document.getElementById("dtItemList");
@@ -1533,6 +1735,47 @@
             activeDetailTx = null;
         }
 
+        function toggleMasukTransaksiModal() {
+            if (!activeDetailTx) return;
+
+            const id = activeDetailTx.id;
+            const isInTransaksi = transaksiList.some(t => t.id === id);
+
+            if (isInTransaksi) {
+                // Keluarkan dari transaksi
+                transaksiList = transaksiList.filter(t => t.id !== id);
+                activeDetailTx.masukRiwayatTransaksi = false;
+
+                const invIdx = invoiceList.findIndex(inv => inv.id === id);
+                if (invIdx !== -1) {
+                    invoiceList[invIdx].masukRiwayatTransaksi = false;
+                } else {
+                    invoiceList.unshift(activeDetailTx);
+                }
+                showCenterToast("Invoice dikeluarkan dari Riwayat Transaksi!");
+            } else {
+                // Masukkan ke transaksi
+                activeDetailTx.masukRiwayatTransaksi = true;
+                transaksiList.unshift(activeDetailTx);
+
+                const invIdx = invoiceList.findIndex(inv => inv.id === id);
+                if (invIdx !== -1) {
+                    invoiceList[invIdx].masukRiwayatTransaksi = true;
+                } else {
+                    invoiceList.unshift(activeDetailTx);
+                }
+                showCenterToast("Invoice berhasil dimasukkan ke Riwayat Transaksi!");
+            }
+
+            localStorage.setItem("dagangan_transaksi", JSON.stringify(transaksiList));
+            localStorage.setItem("dagangan_invoices", JSON.stringify(invoiceList));
+            renderSemuaTabel();
+            renderRiwayatInvoice();
+            triggerAutoSync();
+
+            bukaDetailTransaksiModal(activeDetailTx);
+        }
+
         function toggleStatusDetailModal() {
             if (!activeDetailTx) return;
 
@@ -1547,8 +1790,22 @@
                 showCenterToast("Status diubah: Lunas!");
             }
 
+            const txIdx = transaksiList.findIndex(t => t.id === activeDetailTx.id);
+            if (txIdx !== -1) {
+                transaksiList[txIdx].status = activeDetailTx.status;
+                transaksiList[txIdx].pembayaran = activeDetailTx.pembayaran;
+            }
+
+            const invIdx = invoiceList.findIndex(inv => inv.id === activeDetailTx.id);
+            if (invIdx !== -1) {
+                invoiceList[invIdx].status = activeDetailTx.status;
+                invoiceList[invIdx].pembayaran = activeDetailTx.pembayaran;
+            }
+
             localStorage.setItem("dagangan_transaksi", JSON.stringify(transaksiList));
+            localStorage.setItem("dagangan_invoices", JSON.stringify(invoiceList));
             renderSemuaTabel();
+            renderRiwayatInvoice();
             triggerAutoSync();
 
             // Refresh tampilan modal
@@ -1558,7 +1815,9 @@
         function cetakStrukDariModalDetail() {
             if (!activeDetailTx) return;
 
-            document.getElementById("prnNoStruk").textContent = activeDetailTx.noStruk || `TX${activeDetailTx.id}`;
+            const noStruk = activeDetailTx.noStruk || `TX${activeDetailTx.id}`;
+            const noInvoice = activeDetailTx.noInvoice ? `[${activeDetailTx.noInvoice}] ` : '';
+            document.getElementById("prnNoStruk").textContent = `${noInvoice}${noStruk}`;
             document.getElementById("prnTanggal").textContent = formatTanggalDetailGambar(activeDetailTx.tanggal, activeDetailTx.jam);
             document.getElementById("prnPelanggan").textContent = activeDetailTx.pelanggan || "Pelanggan Umum";
             document.getElementById("prnPembayaran").textContent = activeDetailTx.pembayaran || "-";
@@ -1592,11 +1851,12 @@
             text += `_Perumahan Bumi Indah Pesona, Blok A12 No 1, Kalisuren, Tajurhalang, Bojonggede, Bogor._\n`;
             text += `--------------------------------\n`;
             text += `*NOTA PEMBELIAN / INVOICE*\n`;
+            if (activeDetailTx.noInvoice) text += `No. Invoice: ${activeDetailTx.noInvoice}\n`;
             text += `No. Struk: ${activeDetailTx.noStruk || `TX${activeDetailTx.id}`}\n`;
             text += `Tanggal: ${formatTanggalDetailGambar(activeDetailTx.tanggal, activeDetailTx.jam)}\n`;
             text += `Pelanggan: ${activeDetailTx.pelanggan || "Pelanggan Umum"}\n`;
             text += `Pembayaran: ${activeDetailTx.pembayaran || "-"}\n`;
-            text += `Status: ${activeDetailTx.status === 'lunas' ? 'Lunas' : 'Bill Belum Dibayar'}\n`;
+            text += `Status Pembayaran: ${activeDetailTx.status === 'lunas' ? 'Lunas' : 'Bill Belum Dibayar'}\n`;
             text += `--------------------------------\n`;
 
             if (activeDetailTx.items && activeDetailTx.items.length > 0) {
@@ -1616,15 +1876,19 @@
         function hapusTransaksiDariDetailModal() {
             if (!activeDetailTx) return;
 
-            showConfirmModal("Hapus Transaksi", `Apakah Anda yakin ingin menghapus struk ${activeDetailTx.noStruk}?`, () => {
+            showConfirmModal("Hapus Data", `Apakah Anda yakin ingin menghapus data ini?`, () => {
                 const idToDelete = activeDetailTx.id;
                 transaksiList = transaksiList.filter(t => t.id !== idToDelete);
+                invoiceList = invoiceList.filter(inv => inv.id !== idToDelete);
+
                 localStorage.setItem("dagangan_transaksi", JSON.stringify(transaksiList));
+                localStorage.setItem("dagangan_invoices", JSON.stringify(invoiceList));
 
                 tutupDetailTransaksiModal();
                 renderSemuaTabel();
+                renderRiwayatInvoice();
                 triggerAutoSync();
-                showCenterToast("Transaksi berhasil dihapus");
+                showCenterToast("Data berhasil dihapus");
             });
         }
 
@@ -1732,6 +1996,160 @@
                 `;
                 container.appendChild(card);
             });
+        }
+
+        // ==============================================================
+        // RIWAYAT INVOICE (TRACKING LENGKAP SEMUA INVOICE)
+        // ==============================================================
+        function setFilterInvStatus(status) {
+            activeInvStatusFilter = status;
+            document.getElementById("invChipStatusSemua").className = status === 'semua' ? "text-xs px-3 py-1.5 rounded-full font-bold transition bg-indigo-600 text-white shadow-sm" : "text-xs px-3 py-1.5 rounded-full font-semibold transition bg-slate-100 text-slate-600 hover:bg-slate-200";
+            document.getElementById("invChipStatusLunas").className = status === 'lunas' ? "text-xs px-3 py-1.5 rounded-full font-bold transition bg-emerald-600 text-white shadow-sm" : "text-xs px-3 py-1.5 rounded-full font-semibold transition bg-slate-100 text-slate-600 hover:bg-slate-200";
+            document.getElementById("invChipStatusBelum").className = status === 'belum_dibayar' ? "text-xs px-3 py-1.5 rounded-full font-bold transition bg-amber-500 text-white shadow-sm" : "text-xs px-3 py-1.5 rounded-full font-semibold transition bg-slate-100 text-slate-600 hover:bg-slate-200";
+            renderRiwayatInvoice();
+        }
+
+        function setFilterInvTx(status) {
+            activeInvTxFilter = status;
+            document.getElementById("invChipTxSemua").className = status === 'semua' ? "text-xs px-3 py-1.5 rounded-full font-bold transition bg-indigo-600 text-white shadow-sm" : "text-xs px-3 py-1.5 rounded-full font-semibold transition bg-slate-100 text-slate-600 hover:bg-slate-200";
+            document.getElementById("invChipTxMasuk").className = status === 'masuk' ? "text-xs px-3 py-1.5 rounded-full font-bold transition bg-emerald-600 text-white shadow-sm" : "text-xs px-3 py-1.5 rounded-full font-semibold transition bg-slate-100 text-slate-600 hover:bg-slate-200";
+            document.getElementById("invChipTxHanya").className = status === 'hanya_invoice' ? "text-xs px-3 py-1.5 rounded-full font-bold transition bg-purple-600 text-white shadow-sm" : "text-xs px-3 py-1.5 rounded-full font-semibold transition bg-slate-100 text-slate-600 hover:bg-slate-200";
+            renderRiwayatInvoice();
+        }
+
+        function renderRiwayatInvoice() {
+            const container = document.getElementById("invListContainer");
+            if (!container) return;
+            container.innerHTML = "";
+
+            const query = (document.getElementById("invSearchInput")?.value || "").toLowerCase().trim();
+
+            const filtered = invoiceList.filter(item => {
+                // Filter Periode
+                if (!isItemInFilteredPeriod(item.tanggal)) return false;
+
+                // Filter Status Bayar
+                if (activeInvStatusFilter === 'lunas' && item.status !== 'lunas') return false;
+                if (activeInvStatusFilter === 'belum_dibayar' && item.status === 'lunas') return false;
+
+                // Filter Status Masuk Transaksi
+                const isInTx = transaksiList.some(t => t.id === item.id);
+                if (activeInvTxFilter === 'masuk' && !isInTx) return false;
+                if (activeInvTxFilter === 'hanya_invoice' && isInTx) return false;
+
+                // Search Query
+                if (query) {
+                    const matchStruk = (item.noStruk || "").toLowerCase().includes(query);
+                    const matchInv = (item.noInvoice || "").toLowerCase().includes(query);
+                    const matchPelanggan = (item.pelanggan || "").toLowerCase().includes(query);
+                    const matchItem = item.items ? item.items.some(it => it.nama.toLowerCase().includes(query)) : false;
+                    if (!matchStruk && !matchInv && !matchPelanggan && !matchItem) return false;
+                }
+
+                return true;
+            });
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="bg-white rounded-3xl p-8 text-center border border-slate-200 text-slate-400">
+                        <i class="fa-solid fa-file-invoice-dollar text-3xl mb-2 text-slate-300"></i>
+                        <p class="font-bold text-sm text-slate-600">Tidak ada invoice ditemukan</p>
+                        <p class="text-xs text-slate-400 mt-1">Coba sesuaikan kata kunci pencarian atau ubah filter periode.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            filtered.forEach(inv => {
+                const card = document.createElement("div");
+                card.className = "bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 shadow-sm hover:shadow-md hover:border-indigo-300 transition cursor-pointer";
+                card.onclick = () => bukaDetailTransaksiModal(inv);
+
+                // Preview ringkasan item
+                let itemsSummary = "";
+                if (inv.items && inv.items.length > 0) {
+                    const firstItem = inv.items[0];
+                    if (inv.items.length === 1) {
+                        itemsSummary = `${firstItem.nama} (${firstItem.qty}x)`;
+                    } else {
+                        itemsSummary = `${firstItem.nama} (${firstItem.qty}x) + ${inv.items.length - 1} item lainnya`;
+                    }
+                } else {
+                    itemsSummary = "Item Penjualan";
+                }
+
+                const isLunas = inv.status === 'lunas';
+                const isInTx = transaksiList.some(t => t.id === inv.id);
+
+                card.innerHTML = `
+                    <div class="flex justify-between items-start gap-2">
+                        <div>
+                            <div class="flex flex-wrap items-center gap-2">
+                                <span class="font-bold text-xs sm:text-sm text-indigo-700 font-mono">${inv.noInvoice || `INV-${String(inv.id).slice(-6)}`}</span>
+                                <span class="font-mono text-xs text-slate-400">(${inv.noStruk || `TX${inv.id}`})</span>
+                                <span class="text-[10px] px-2 py-0.5 rounded-full font-bold ${isLunas ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700 italic'}">
+                                    ${isLunas ? 'Lunas' : 'Bill belum dibayar'}
+                                </span>
+                                <span class="text-[10px] px-2 py-0.5 rounded-full font-bold ${isInTx ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-purple-50 text-purple-700 border border-purple-200'}">
+                                    ${isInTx ? '<i class="fa-solid fa-check mr-0.5"></i> Masuk Transaksi' : '<i class="fa-regular fa-file-lines mr-0.5"></i> Hanya Invoice'}
+                                </span>
+                            </div>
+                            <div class="flex items-center gap-1.5 text-xs text-slate-500 mt-1">
+                                <i class="fa-solid fa-user text-blue-500 text-[10px]"></i>
+                                <span class="font-semibold text-slate-700">${inv.pelanggan || "Pelanggan Umum"}</span>
+                                <span class="text-slate-300">•</span>
+                                <span>${formatTanggalDetailGambar(inv.tanggal, inv.jam)}</span>
+                                <span class="text-slate-300">•</span>
+                                <span class="text-[11px] text-slate-600 bg-slate-100 px-1.5 py-0.2 rounded font-medium">${inv.pembayaran || "-"}</span>
+                            </div>
+                        </div>
+
+                        <div class="text-right shrink-0">
+                            <span class="text-xs text-slate-400 block">Total</span>
+                            <span class="text-sm sm:text-base font-black text-[#0284c7]">${formatRp(inv.total)}</span>
+                        </div>
+                    </div>
+
+                    <div class="mt-2.5 pt-2 border-t border-slate-100 flex justify-between items-center text-xs text-slate-500">
+                        <span class="truncate max-w-[240px] sm:max-w-md font-medium text-slate-600">
+                            <i class="fa-solid fa-utensils text-slate-400 mr-1 text-[10px]"></i> ${itemsSummary}
+                        </span>
+                        <span class="text-indigo-600 font-bold hover:underline flex items-center gap-1 text-[11px]">
+                            Lihat Invoice <i class="fa-solid fa-chevron-right text-[9px]"></i>
+                        </span>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function exportInvoiceToCSV() {
+            const filtered = invoiceList.filter(item => isItemInFilteredPeriod(item.tanggal));
+            if (filtered.length === 0) {
+                showCenterToast("Tidak ada data invoice pada periode ini untuk diekspor!", "error");
+                return;
+            }
+
+            let csv = "data:text/csv;charset=utf-8,";
+            csv += "=== REKAP DAFTAR INVOICE (MANGKOKIN) ===\n";
+            csv += `Tanggal Ekspor,${getActiveDate()}\n`;
+            csv += `Total Invoice,${filtered.length}\n\n`;
+            csv += "No,No Invoice,No Struk,Tanggal,Jam,Pelanggan,Status Pembayaran,Metode Bayar,Masuk Transaksi,Rincian Items,Total Tagihan\n";
+
+            filtered.forEach((inv, index) => {
+                const isInTx = transaksiList.some(t => t.id === inv.id);
+                const itemNames = inv.items ? inv.items.map(it => `${it.nama}(${it.qty}x)`).join("; ") : "Item";
+                csv += `${index + 1},"${inv.noInvoice || `INV-${String(inv.id).slice(-6)}`}","${inv.noStruk || `TX${inv.id}`}","${inv.tanggal}","${inv.jam}","${inv.pelanggan}","${inv.status}","${inv.pembayaran}","${isInTx ? 'Ya' : 'Tidak'}","${itemNames}",${inv.total}\n`;
+            });
+
+            const encodedUri = encodeURI(csv);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `Mangkokin_Riwayat_Invoice_${getActiveDate()}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            showCenterToast("Data riwayat invoice berhasil diekspor ke CSV!");
         }
 
         // ==========================================
@@ -1994,6 +2412,15 @@
                             localStorage.setItem("dagangan_transaksi", JSON.stringify(transaksiList));
                         }
 
+                        if (Array.isArray(data.invoiceList) && data.invoiceList.length > 0) {
+                            const invMap = new Map(invoiceList.map(inv => [inv.id, inv]));
+                            data.invoiceList.forEach(inv => {
+                                invMap.set(inv.id, normalizeTransaksi(inv));
+                            });
+                            invoiceList = Array.from(invMap.values()).sort((a, b) => (b.id || 0) - (a.id || 0));
+                            localStorage.setItem("dagangan_invoices", JSON.stringify(invoiceList));
+                        }
+
                         if (Array.isArray(data.pengeluaranList) && data.pengeluaranList.length > 0) {
                             const expMap = new Map(pengeluaranList.map(p => [p.id, p]));
                             data.pengeluaranList.forEach(p => expMap.set(p.id, p));
@@ -2004,6 +2431,13 @@
                         if (data.modalAwalMap) {
                             modalAwalMap = Object.assign({}, modalAwalMap, data.modalAwalMap);
                             localStorage.setItem("dagangan_modal_harian_map", JSON.stringify(modalAwalMap));
+                        }
+
+                        if (data.saldoKasFisik !== undefined) {
+                            saldoKasFisik = data.saldoKasFisik;
+                            if (saldoKasFisik !== null) {
+                                localStorage.setItem("dagangan_saldo_kas", saldoKasFisik);
+                            }
                         }
 
                         if (data.saldoBCA !== undefined) {
@@ -2023,6 +2457,7 @@
                         }
 
                         renderSemuaTabel();
+                        renderRiwayatInvoice();
                         setCloudStatus("success", getCurrentTimeHHMM());
                         showCenterToast("Data berhasil disinkronkan dari Cloud!");
                     }
@@ -2041,8 +2476,10 @@
                 action: "syncAll",
                 timestamp: new Date().toISOString(),
                 transaksiList: transaksiList,
+                invoiceList: invoiceList,
                 pengeluaranList: pengeluaranList,
                 modalAwalMap: modalAwalMap,
+                saldoKasFisik: saldoKasFisik,
                 saldoBCA: saldoBCA,
                 saldoShopeepay: saldoShopeepay,
                 menus: menuList
@@ -2104,8 +2541,10 @@ function doGet(e) {
   if (!backupData) {
     backupData = JSON.stringify({
       transaksiList: [],
+      invoiceList: [],
       pengeluaranList: [],
       modalAwalMap: {},
+      saldoKasFisik: 0,
       saldoBCA: 0,
       saldoShopeepay: 0,
       menus: []
@@ -2152,11 +2591,13 @@ function doPost(e) {
         function unduhBackupJSON() {
             const dataBackup = {
                 appName: "Mangkokin",
-                version: "2.0",
+                version: "2.1",
                 exportedAt: new Date().toISOString(),
                 transaksiList: transaksiList,
+                invoiceList: invoiceList,
                 pengeluaranList: pengeluaranList,
                 modalAwalMap: modalAwalMap,
+                saldoKasFisik: saldoKasFisik,
                 saldoBCA: saldoBCA,
                 saldoShopeepay: saldoShopeepay,
                 menus: menuList
@@ -2183,21 +2624,38 @@ function doPost(e) {
                     if (data && data.transaksiList) {
                         showConfirmModal("Pulihkan Data", "Data saat ini akan diperbarui dari file backup. Lanjutkan?", () => {
                             transaksiList = data.transaksiList.map(t => normalizeTransaksi(t));
+                            if (data.invoiceList && Array.isArray(data.invoiceList)) {
+                                invoiceList = data.invoiceList.map(t => normalizeTransaksi(t));
+                            } else {
+                                invoiceList = transaksiList.map(t => ({
+                                    ...t,
+                                    noInvoice: t.noInvoice || `INV-${String(t.id || Date.now()).slice(-6)}`,
+                                    masukRiwayatTransaksi: true
+                                }));
+                            }
                             pengeluaranList = data.pengeluaranList || [];
                             modalAwalMap = data.modalAwalMap || {};
+                            saldoKasFisik = data.saldoKasFisik !== undefined ? data.saldoKasFisik : null;
                             saldoBCA = data.saldoBCA || 0;
                             saldoShopeepay = data.saldoShopeepay || 0;
                             if (data.menus) menuList = data.menus;
 
                             localStorage.setItem("dagangan_transaksi", JSON.stringify(transaksiList));
+                            localStorage.setItem("dagangan_invoices", JSON.stringify(invoiceList));
                             localStorage.setItem("dagangan_pengeluaran", JSON.stringify(pengeluaranList));
                             localStorage.setItem("dagangan_modal_harian_map", JSON.stringify(modalAwalMap));
+                            if (saldoKasFisik !== null) {
+                                localStorage.setItem("dagangan_saldo_kas", saldoKasFisik);
+                            } else {
+                                localStorage.removeItem("dagangan_saldo_kas");
+                            }
                             localStorage.setItem("dagangan_saldo_bca", saldoBCA);
                             localStorage.setItem("dagangan_saldo_shopeepay", saldoShopeepay);
                             localStorage.setItem("dagangan_menus", JSON.stringify(menuList));
 
                             initMenuOptions();
                             renderSemuaTabel();
+                            renderRiwayatInvoice();
                             triggerAutoSync();
                             tutupModalCloudSync();
                             showCenterToast("Data berhasil dipulihkan secara lengkap!");
@@ -2266,14 +2724,15 @@ function doPost(e) {
                 });
             }
 
-            const saldoKasFisik = modalAwalHariIni + totalPenjualan - totalPengeluaran;
+            const calculatedKasFisik = modalAwalHariIni + totalPenjualan - totalPengeluaran;
+            const finalKasFisik = (saldoKasFisik !== null && saldoKasFisik !== undefined) ? saldoKasFisik : calculatedKasFisik;
 
             document.getElementById("statModalAwal").textContent = formatRp(modalAwalHariIni);
             document.getElementById("labelTanggalModal").textContent = formatTanggalLengkapIndo(activeDate);
             document.getElementById("statTotalPendapatan").textContent = formatRp(totalPenjualan);
             document.getElementById("statQtyPenjualan").textContent = `${totalQty} porsi terjual`;
             document.getElementById("statTotalPengeluaran").textContent = formatRp(totalPengeluaran);
-            document.getElementById("statSaldoKas").textContent = formatRp(saldoKasFisik);
+            document.getElementById("statSaldoKas").textContent = formatRp(finalKasFisik);
 
             document.getElementById("statSaldoBCA").textContent = formatRp(saldoBCA);
             document.getElementById("statSaldoShopeepay").textContent = formatRp(saldoShopeepay);
@@ -2282,6 +2741,28 @@ function doPost(e) {
             if (expBadge) expBadge.textContent = `Total: ${formatRp(totalPengeluaran)}`;
 
             renderRiwayatTransaksi();
+            renderRiwayatInvoice();
+        }
+
+        function getCalculatedKasFisik() {
+            const activeDate = getActiveDate();
+            const modalAwalHariIni = modalAwalMap[activeDate] || 0;
+            const filteredTransaksi = transaksiList.filter(item => isItemInFilteredPeriod(item.tanggal));
+            const filteredPengeluaran = pengeluaranList.filter(item => isItemInFilteredPeriod(item.tanggal));
+
+            let totalPenjualan = 0;
+            filteredTransaksi.forEach(t => totalPenjualan += (t.total || t.subtotal || 0));
+
+            let totalPengeluaran = 0;
+            filteredPengeluaran.forEach(p => totalPengeluaran += (p.nominal || 0));
+
+            return modalAwalHariIni + totalPenjualan - totalPengeluaran;
+        }
+
+        function setSaldoKasFromCalculation() {
+            const calc = getCalculatedKasFisik();
+            document.getElementById("bankInputNominal").value = calc > 0 ? formatRp(calc) : 'Rp 0';
+            showCenterToast("Nominal disesuaikan dengan hitungan kasir!");
         }
 
         function isItemInFilteredPeriod(itemDateStr) {
@@ -2382,16 +2863,33 @@ function doPost(e) {
             const labelEl = document.getElementById("bankLabel");
             const typeInput = document.getElementById("bankTargetType");
             const nominalInput = document.getElementById("bankInputNominal");
+            const autoCalcBtn = document.getElementById("bankAutoCalcBtn");
+            const btnSave = document.getElementById("btnSaveBank");
 
             typeInput.value = type;
             if (type === 'BCA') {
                 titleEl.innerHTML = '<i class="fa-solid fa-building-columns text-blue-600"></i> Saldo Rekening BCA';
                 labelEl.textContent = 'Nominal Saldo Rekening BCA Terkini';
                 nominalInput.value = saldoBCA > 0 ? formatRp(saldoBCA) : '';
-            } else {
+                if (autoCalcBtn) autoCalcBtn.classList.add("hidden");
+                if (btnSave) btnSave.className = "flex-1 py-2.5 rounded-xl text-xs font-bold bg-blue-600 text-white hover:bg-blue-700 transition shadow-md shadow-blue-200";
+            } else if (type === 'ShopeePay') {
                 titleEl.innerHTML = '<i class="fa-solid fa-wallet text-amber-500"></i> Saldo ShopeePay / QRIS';
                 labelEl.textContent = 'Nominal Saldo ShopeePay Terkini';
                 nominalInput.value = saldoShopeepay > 0 ? formatRp(saldoShopeepay) : '';
+                if (autoCalcBtn) autoCalcBtn.classList.add("hidden");
+                if (btnSave) btnSave.className = "flex-1 py-2.5 rounded-xl text-xs font-bold bg-amber-600 text-white hover:bg-amber-700 transition shadow-md shadow-amber-200";
+            } else if (type === 'KasFisik') {
+                titleEl.innerHTML = '<i class="fa-solid fa-cash-register text-indigo-600"></i> Sisa Uang Fisik (Tunai Laci)';
+                labelEl.textContent = 'Nominal Sisa Uang Fisik Terkini';
+                const curVal = (saldoKasFisik !== null && saldoKasFisik !== undefined) ? saldoKasFisik : getCalculatedKasFisik();
+                nominalInput.value = curVal > 0 ? formatRp(curVal) : '';
+                if (autoCalcBtn) {
+                    autoCalcBtn.classList.remove("hidden");
+                    const calc = getCalculatedKasFisik();
+                    autoCalcBtn.innerHTML = `<i class="fa-solid fa-calculator mr-1"></i> Gunakan Nilai Hitungan Otomatis (${formatRp(calc)})`;
+                }
+                if (btnSave) btnSave.className = "flex-1 py-2.5 rounded-xl text-xs font-bold bg-indigo-600 text-white hover:bg-indigo-700 transition shadow-md shadow-indigo-200";
             }
 
             dialog.classList.remove("hidden");
@@ -2412,10 +2910,14 @@ function doPost(e) {
                 saldoBCA = nominal;
                 localStorage.setItem("dagangan_saldo_bca", saldoBCA);
                 showCenterToast("Saldo BCA berhasil diperbarui!");
-            } else {
+            } else if (type === 'ShopeePay') {
                 saldoShopeepay = nominal;
                 localStorage.setItem("dagangan_saldo_shopeepay", saldoShopeepay);
                 showCenterToast("Saldo ShopeePay berhasil diperbarui!");
+            } else if (type === 'KasFisik') {
+                saldoKasFisik = nominal;
+                localStorage.setItem("dagangan_saldo_kas", saldoKasFisik);
+                showCenterToast("Sisa Uang Fisik berhasil diperbarui!");
             }
 
             renderSemuaTabel();
@@ -2444,7 +2946,7 @@ function doPost(e) {
             let totalBelanja = 0;
             filteredPengeluaran.forEach(p => totalBelanja += (p.nominal || 0));
 
-            const sisaKasFisik = modalAwalHariIni + totalPenjualan - totalBelanja;
+            const finalKasFisik = (saldoKasFisik !== null && saldoKasFisik !== undefined) ? saldoKasFisik : (modalAwalHariIni + totalPenjualan - totalBelanja);
 
             let csv = "data:text/csv;charset=utf-8,";
             csv += "=== RANGKUMAN KEUANGAN & ARUS KAS (MANGKOKIN) ===\n";
@@ -2452,7 +2954,7 @@ function doPost(e) {
             csv += `Modal Kas Awal,${modalAwalHariIni}\n`;
             csv += `Total Penjualan,${totalPenjualan}\n`;
             csv += `Total Belanja Pengeluaran,${totalBelanja}\n`;
-            csv += `Sisa Saldo Kas Fisik (Tunai),${sisaKasFisik}\n`;
+            csv += `Sisa Uang Fisik (Tunai),${finalKasFisik}\n`;
             csv += `Saldo BCA,${saldoBCA}\n`;
             csv += `Saldo ShopeePay,${saldoShopeepay}\n\n`;
 
@@ -2650,12 +3152,17 @@ function doPost(e) {
 
         function tanyaResetDataHarian() {
             if (!isAdminLoggedIn) return;
-            showConfirmModal("Reset Semua Data", "Seluruh data transaksi dan catatan belanja akan dibersihkan. Pastikan Anda telah mengunduh backup JSON jika diperlukan.", () => {
+            showConfirmModal("Reset Semua Data", "Seluruh data transaksi, invoice, dan catatan belanja akan dibersihkan. Pastikan Anda telah mengunduh backup JSON jika diperlukan.", () => {
                 transaksiList = [];
+                invoiceList = [];
                 pengeluaranList = [];
+                saldoKasFisik = null;
                 localStorage.removeItem("dagangan_transaksi");
+                localStorage.removeItem("dagangan_invoices");
                 localStorage.removeItem("dagangan_pengeluaran");
+                localStorage.removeItem("dagangan_saldo_kas");
                 renderSemuaTabel();
+                renderRiwayatInvoice();
                 triggerAutoSync();
                 showCenterToast("Semua data berhasil dibersihkan!");
             });
